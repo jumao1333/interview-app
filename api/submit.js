@@ -18,8 +18,11 @@ module.exports = async (req, res) => {
     if (!role || !TABLES[role]) {
       return res.status(400).json({ error: 'Invalid role' });
     }
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
 
-    const fields = buildFields(role, name, position, answers || {});
+    const fields = buildFields(role, name, position || '', answers || {});
     const result = await writeToFeishu(role, fields);
 
     if (result.code === 0) {

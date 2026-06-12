@@ -526,6 +526,16 @@ body::before {
 }
 .msg-error small { color: var(--text-dim); display: block; margin-top: 4px; }
 
+.msg-warn {
+  background: rgba(255,159,10,0.08);
+  border: 1px solid rgba(255,159,10,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  color: #ff9f0a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .msg-success {
   background: rgba(48,209,88,0.08);
   border: 1px solid rgba(48,209,88,0.2);
@@ -678,7 +688,7 @@ body::before {
     <div id="info-section" class="info-card hidden">
       <div class="field">
         <label>你的名字</label>
-        <input type="text" id="input-name" placeholder="可写简称，方便我知道是谁">
+        <input type="text" id="input-name" placeholder="可写简称，方便我知道是谁" oninput="saveDraft()">
       </div>
     </div>
 
@@ -799,6 +809,7 @@ var isDirectLink = false;
 var questions = [];
 var currentStep = -1;
 var answers = {};
+var API_BASE = 'https://interview-app-phi-ten.vercel.app';
 
 /* ============================================================
    Screen Navigation
@@ -856,11 +867,25 @@ function loadQuestions(role) {
   document.getElementById('intro-text').textContent = data.intro || '';
   answers = {};
   currentStep = -1;
+
+  // Check for saved draft
+  var draft = loadDraft();
+  if (draft) {
+    answers = draft.answers || {};
+    document.getElementById('input-name').value = draft.name || '';
+    currentStep = draft.currentStep;
+    document.getElementById('intro-text').classList.add('hidden');
+    showInfoScreen();
+    document.getElementById('btn-next').textContent = '继续答题（已恢复草稿）';
+    return;
+  }
+
   showInfoScreen();
 }
 
 function showInfoScreen() {
   document.getElementById('info-section').classList.remove('hidden');
+  document.getElementById('intro-text').classList.add('hidden');
   document.getElementById('progress-section').classList.add('hidden');
   document.getElementById('question-area').innerHTML = '';
   document.getElementById('btn-prev').classList.add('hidden');
@@ -929,6 +954,7 @@ function renderQuestion(idx) {
 
 function nextQuestion() {
   saveCurrentAnswer();
+  saveDraft();
   if (currentStep === -1) { currentStep = 0; renderQuestion(0); return; }
   currentStep++;
   if (currentStep >= questions.length) currentStep = questions.length - 1;
@@ -937,6 +963,7 @@ function nextQuestion() {
 
 function prevQuestion() {
   saveCurrentAnswer();
+  saveDraft();
   currentStep--;
   if (currentStep < 0) { showInfoScreen(); return; }
   renderQuestion(currentStep);
@@ -951,11 +978,13 @@ function toggleOption(el, qid, opt) {
   el.parentElement.querySelectorAll('.option-chip.selected').forEach(function(c){ sels.push(c.textContent.trim()); });
   if (!answers[qid] || typeof answers[qid] === 'string') answers[qid] = {selected:[], note:''};
   answers[qid].selected = sels;
+  saveDraft();
 }
 
 function updateNote(qid, val) {
   if (!answers[qid] || typeof answers[qid] === 'string') answers[qid] = {selected:[], note:''};
   answers[qid].note = val;
+  saveDraft();
 }
 
 function updateCharCount(el, countId) {
@@ -966,7 +995,7 @@ function updateCharCount(el, countId) {
   else { display.textContent = ''; }
 }
 
-function updateText(qid, val) { answers[qid] = val; }
+function updateText(qid, val) { answers[qid] = val; saveDraft(); }
 
 function saveCurrentAnswer() {
   if (currentStep >= 0 && currentStep < questions.length) {
@@ -980,38 +1009,108 @@ function saveCurrentAnswer() {
 }
 
 /* ============================================================
+   Draft Auto-Save
+   ============================================================ */
+function getDraftKey() { return 'interview_draft_' + currentRole; }
+
+function saveDraft() {
+  if (!currentRole) return;
+  try {
+    var name = document.getElementById('input-name').value.trim();
+    var draft = { role: currentRole, name: name, answers: answers, currentStep: currentStep, savedAt: Date.now() };
+    localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+  } catch(e) {}
+}
+
+function loadDraft() {
+  if (!currentRole) return false;
+  try {
+    var raw = localStorage.getItem(getDraftKey());
+    if (!raw) return false;
+    var draft = JSON.parse(raw);
+    if (!draft || !draft.answers || Object.keys(draft.answers).length === 0) return false;
+    // Expire drafts older than 72 hours
+    if (Date.now() - draft.savedAt > 72 * 3600 * 1000) return false;
+    return draft;
+  } catch(e) { return false; }
+}
+
+function clearDraft() {
+  if (!currentRole) return;
+  try { localStorage.removeItem(getDraftKey()); } catch(e) {}
+}
+
+/* ============================================================
    Submit
    ============================================================ */
 async function submitForm() {
   saveCurrentAnswer();
   var btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.textContent = '提交中…';
-  document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, questions.length);
-
   var name = document.getElementById('input-name').value.trim();
 
   if (!name) {
     document.getElementById('submit-msg').innerHTML = '<div class="msg-error">请先填写你的名字</div>';
-    btn.disabled = false; btn.textContent = '提交'; return;
+    return;
   }
 
+  // Minimum character check for text questions
+  var shortQuestions = checkMinChars();
+  if (shortQuestions.length > 0 && document.getElementById('submit-msg').innerHTML === '') {
+    var labels = shortQuestions.map(function(i){ return '第' + (i+1) + '题'; }).join('、');
+    document.getElementById('submit-msg').innerHTML = '<div class="msg-warn">' + labels + ' 内容较少（不足10字），补充细节会让结果更有用。<br><button class="btn btn-next" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="forceSubmit()">仍要提交</button> <button class="btn btn-prev" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="goToShortest(' + shortQuestions[0] + ')">回去补充</button></div>';
+    return;
+  }
+
+  forceSubmit();
+}
+
+function checkMinChars() {
+  var short = [];
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    if (q.type !== 'text') continue;
+    var val = answers[q.id];
+    if (!val || (typeof val === 'string' && val.trim().length < 10)) {
+      short.push(i);
+    }
+  }
+  return short;
+}
+
+function goToShortest(idx) {
+  document.getElementById('submit-msg').innerHTML = '';
+  currentStep = idx;
+  renderQuestion(currentStep);
+}
+
+function forceSubmit() {
+  var btn = document.getElementById('btn-submit');
+  document.getElementById('submit-msg').innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = '提交中…';
+  document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, questions.length);
+  doSubmit();
+}
+
+async function doSubmit() {
+  var name = document.getElementById('input-name').value.trim();
+  var btn = document.getElementById('btn-submit');
   var payload = { role: currentRole, name: name, position: '', answers: answers };
   var submitted = false;
 
   try {
-    var resp = await fetch('/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     var result = await resp.json();
     if (result.success) submitted = true;
   } catch(e) {}
 
   if (submitted) {
+    clearDraft();
     document.getElementById('complete-icon').textContent = '🎉';
     document.getElementById('complete-title').textContent = '提交成功';
-    document.getElementById('complete-desc').textContent = '感谢你的时间。这些信息会帮我们找到真正需要提效的地方。';
+    document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
     showScreen('complete');
   } else {
-    // Always show completion screen, never go back to questions
     fallbackSave(payload);
     document.getElementById('complete-icon').textContent = '✅';
     document.getElementById('complete-title').textContent = '已保存';
@@ -1066,7 +1165,7 @@ function escAttr(s) { if(!s)return''; return s.replace(/&/g,'&amp;').replace(/"/
 (function checkServer() {
   var dot = document.getElementById('status-dot');
   var txt = document.getElementById('status-text');
-  fetch('/api/health').then(function(r){ return r.json(); }).then(function(d){
+  fetch(API_BASE + '/api/health').then(function(r){ return r.json(); }).then(function(d){
     if(d && d.feishu_connected){ dot.className = 'status-dot online'; txt.textContent = '飞书已连接'; }
     else { txt.textContent = '连接中…'; }
   }).catch(function(){ txt.textContent = '离线模式'; });

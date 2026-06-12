@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>岗位提效采访 · 麦芽MCN</title>
+<style>
+/* ============================================================
+   Apple Keynote Aesthetic — Deep Black + Frosted Glass + Generous Space
+   ============================================================ */
+:root {
+  --bg: #000;
+  --card-bg: rgba(255,255,255,0.05);
+  --card-hover: rgba(255,255,255,0.08);
+  --card-border: rgba(255,255,255,0.08);
+  --card-active-border: rgba(255,255,255,0.18);
+  --text: #f5f5f7;
+  --text-sub: #86868b;
+  --text-dim: #6e6e73;
+  --accent: #2997ff;
+  --accent-dim: rgba(41,151,255,0.15);
+  --success: #30d158;
+  --error: #ff453a;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Ambient glow — very subtle */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle at center, rgba(41,151,255,0.04), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Hero — Apple product page style
+   ============================================================ */
+.hero {
+  text-align: center;
+  padding: 60px 0 40px;
+}
+
+.hero-tag {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 16px;
+  color: var(--text-sub);
+  line-height: 1.5;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 48px 0 36px; }
+  .hero h1 { font-size: 34px; }
+  .hero p { font-size: 15px; }
+}
+
+/* ============================================================
+   Role Cards — Frosted glass
+   ============================================================ */
+.role-section { margin-top: 8px; }
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.role-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.03), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.role-card:hover {
+  background: var(--card-hover);
+  border-color: var(--card-active-border);
+  transform: scale(1.02);
+}
+.role-card:hover::after { opacity: 1; }
+
+.role-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 14px;
+  filter: grayscale(0.2);
+}
+
+.role-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.role-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 500px) {
+  .role-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 30px; }
+}
+
+/* ============================================================
+   Interview Screen
+   ============================================================ */
+.interview-hero {
+  text-align: center;
+  padding: 40px 0 24px;
+}
+
+.interview-hero h2 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.interview-hero p {
+  color: var(--text-sub);
+  font-size: 15px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-sub);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+.back-link:hover { color: var(--text); }
+
+/* Intro */
+.intro-box {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  color: var(--text-sub);
+  font-size: 15px;
+  line-height: 1.7;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Info inputs */
+.info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+
+.field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+}
+
+.field input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+}
+.field input:focus {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* ============================================================
+   Progress — Clean dot indicator
+   ============================================================ */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.12);
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.progress-dot.done { background: rgba(255,255,255,0.25); }
+.progress-dot.active { background: var(--accent); width: 24px; }
+
+/* ============================================================
+   Question Card — Apple card style
+   ============================================================ */
+.question-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: cardIn 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.question-num {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.question-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.question-prompt {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+/* Options — Apple chip style */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.option-chip {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  user-select: none;
+  color: var(--text-sub);
+}
+.option-chip:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.option-chip.selected {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Note input — typing supplement area */
+.note-wrap {
+  position: relative;
+  margin-top: 4px;
+}
+
+.note-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 16px;
+  font-family: var(--font-body);
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  min-height: 72px;
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  -webkit-appearance: none;
+}
+.note-input:focus {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.03);
+  min-height: 100px;
+}
+.note-input::placeholder { color: var(--text-dim); }
+
+.note-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.note-label .icon-pencil {
+  width: 14px;
+  height: 14px;
+  opacity: 0.5;
+}
+
+.note-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: right;
+  margin-top: 6px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.note-input:focus ~ .note-hint { opacity: 0.6; }
+
+.note-char-count {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* Textarea */
+.text-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: var(--font-body);
+  outline: none;
+  resize: vertical;
+  min-height: 140px;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+}
+.text-input:focus {
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+}
+.text-input::placeholder { color: var(--text-dim); }
+.text-input-short { min-height: 90px; }
+
+/* ============================================================
+   Navigation Buttons
+   ============================================================ */
+.nav-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.btn {
+  padding: 14px 36px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border: none;
+  font-family: var(--font-body);
+  letter-spacing: -0.2px;
+}
+.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+.btn-prev {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-sub);
+}
+.btn-prev:hover:not(:disabled) {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+
+.btn-next, .btn-submit {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(41,151,255,0.2);
+}
+.btn-next:hover:not(:disabled), .btn-submit:hover:not(:disabled) {
+  background: #40a9ff;
+  box-shadow: 0 0 30px rgba(41,151,255,0.3);
+  transform: scale(1.02);
+}
+
+/* ============================================================
+   Complete Screen
+   ============================================================ */
+.complete-screen {
+  text-align: center;
+  padding: 100px 20px 60px;
+}
+.complete-icon { font-size: 64px; display: block; margin-bottom: 24px; }
+.complete-screen h2 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.complete-screen p {
+  color: var(--text-sub);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================================
+   Messages
+   ============================================================ */
+#submit-msg { margin-top: 20px; text-align: center; }
+
+.msg-error {
+  background: rgba(255,69,58,0.08);
+  border: 1px solid rgba(255,69,58,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  color: var(--error);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.msg-error small { color: var(--text-dim); display: block; margin-top: 4px; }
+
+.msg-warn {
+  background: rgba(255,159,10,0.08);
+  border: 1px solid rgba(255,159,10,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  color: #ff9f0a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.msg-success {
+  background: rgba(48,209,88,0.08);
+  border: 1px solid rgba(48,209,88,0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  color: var(--success);
+  font-size: 14px;
+  text-align: center;
+}
+.msg-success small { color: var(--text-dim); display: block; margin-top: 4px; }
+
+/* ============================================================
+   Status bar
+   ============================================================ */
+.status-bar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--error);
+  transition: background 0.3s;
+}
+.status-dot.online { background: var(--success); }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.modal-box {
+  background: #1c1c1e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  padding: 36px;
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+}
+.modal-box h3 { font-family: var(--font-display); font-size: 20px; margin-bottom: 12px; color: var(--text); }
+.modal-box p { color: var(--text-sub); font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
+.modal-box textarea {
+  width: 100%; height: 140px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xs);
+  color: var(--text); font-size: 12px; padding: 14px;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+.modal-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* Admin panel */
+.admin-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(20px);
+}
+.admin-card .meta { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+.admin-card .meta span { color: var(--accent); font-weight: 600; }
+.admin-card pre {
+  font-size: 11px; color: var(--text-sub); white-space: pre-wrap;
+  word-break: break-all; max-height: 100px; overflow: auto;
+  background: rgba(0,0,0,0.4); padding: 10px; border-radius: var(--radius-xs); margin: 8px 0;
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+.screen { display: none; }
+.screen.active { display: block; }
+.hidden { display: none !important; }
+
+@media (max-width: 600px) {
+  .container { padding: 0 16px 100px; }
+  .question-card { padding: 24px 20px; }
+  .question-title { font-size: 19px; }
+  .interview-hero h2 { font-size: 28px; }
+  .btn { padding: 14px 28px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===== Screen 0: Role Selection ===== -->
+  <div id="screen-role" class="screen active">
+    <div class="hero">
+      <div class="hero-tag">MAIYA MCN</div>
+      <h1>岗位提效采访</h1>
+      <p>选你的岗位，开始填写。预计 8-12 分钟。</p>
+    </div>
+    <div class="role-section">
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole('content_leader')">
+          <span class="role-icon">🎬</span>
+          <div class="role-name">内容负责人/管理层</div>
+          <div class="role-desc">组长、内容总监等管理岗</div>
+        </div>
+        <div class="role-card" onclick="selectRole('content_editor')">
+          <span class="role-icon">✍️</span>
+          <div class="role-name">内容编导</div>
+          <div class="role-desc">一线编导、脚本写作、跟拍后期</div>
+        </div>
+        <div class="role-card" onclick="selectRole('broker_leader')">
+          <span class="role-icon">🤝</span>
+          <div class="role-name">经纪负责人/管理层</div>
+          <div class="role-desc">经纪团队管理岗</div>
+        </div>
+        <div class="role-card" onclick="selectRole('broker')">
+          <span class="role-icon">📋</span>
+          <div class="role-name">经纪</div>
+          <div class="role-desc">一线经纪，推进达人签约</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 1: Interview ===== -->
+  <div id="screen-interview" class="screen">
+    <button class="back-link" id="back-link" onclick="goBack()">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M7 2L3 6l4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      返回选岗位
+    </button>
+
+    <div class="interview-hero">
+      <h2 id="interview-title">岗位提效采访</h2>
+      <p id="interview-subtitle">按真实情况写，不用正式，越具体越有用</p>
+    </div>
+
+    <div class="intro-box" id="intro-text"></div>
+
+    <div id="info-section" class="info-card hidden">
+      <div class="field">
+        <label>你的名字</label>
+        <input type="text" id="input-name" placeholder="可写简称，方便我知道是谁" oninput="saveDraft()">
+      </div>
+    </div>
+
+    <div id="progress-section" class="progress-wrap hidden"></div>
+
+    <div id="question-area"></div>
+
+    <div class="nav-row">
+      <button class="btn btn-prev" id="btn-prev" onclick="prevQuestion()">上一题</button>
+      <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">下一题</button>
+      <button class="btn btn-submit hidden" id="btn-submit" onclick="submitForm()">提交</button>
+    </div>
+
+    <div id="submit-msg"></div>
+  </div>
+
+  <!-- ===== Screen 2: Completed ===== -->
+  <div id="screen-complete" class="screen">
+    <div class="complete-screen">
+      <span class="complete-icon" id="complete-icon">🎉</span>
+      <h2 id="complete-title">提交成功</h2>
+      <p id="complete-desc">感谢你的时间。这些信息会帮我们找到真正需要提效的地方。</p>
+      <button class="btn btn-next" onclick="location.reload()">完成</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="status-bar">
+  <span class="status-dot" id="status-dot"></span>
+  <span id="status-text">检查连接…</span>
+</div>
+
+<!-- Modal for offline fallback -->
+<div id="modal-copy" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>复制数据</h3>
+    <p>服务器暂时不可用，请复制下方数据发送给管理员。</p>
+    <textarea id="modal-json" readonly onclick="this.select()"></textarea>
+    <div class="modal-btns">
+      <button class="btn btn-submit" style="padding:10px 24px;font-size:14px;" onclick="copyModalJSON()">复制到剪贴板</button>
+      <button class="btn btn-prev" style="padding:10px 24px;font-size:14px;" onclick="closeModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ALL QUESTIONS — Fully Embedded
+   ============================================================ */
+var ALL_QUESTIONS = {
+  /* ============================================================
+     内容负责人/管理层 — v3：基础锚点 + 高阶判断题
+     ============================================================ */
+  content_leader: {
+    intro: "这份问卷帮你梳理团队现状。不只问「哪里卡」，更想知道你的判断——什么该先解决、什么可以放弃、标准怎么定。目的是帮你和团队提效，越具体后面做工具越准。",
+    questions: [
+      // --- 基础锚点 ---
+      {id:"q1",title:"你这条线现在最重要的结果是什么？",type:"select",options:["提高爆款率","减少返工","提升账号增长","提升新人培养","复盘更准","标准更统一"],note_label:"补充",note_suffix:"（选完后补充你的想法）",note_placeholder:"说说你选这个的原因……"},
+      {id:"q2",title:"脚本生成之外，你最想让 AI 帮内容团队解决什么？",type:"select",options:["评论/差评归类","内容方向复盘","账号阶段判断","拍摄表达复盘","后期返工前置","团队SOP","检查清单","判断标准沉淀"],note_label:"补充想法",note_suffix:"",note_placeholder:"具体说说为什么是这些……"},
+      {id:"q3",title:"团队最容易反复出现的问题是什么？",type:"select",options:["选题判断不准","脚本可拍性不足","人设不够贴","拍摄表达弱","后期返工多","复盘太空","新人理解慢","账号阶段判断不一致"],note_label:"补充",note_suffix:"",note_placeholder:"举个例子说说反复出现的情况……"},
+
+      // ===== 高阶判断 =====
+      {id:"qh1",title:"如果下周只能先解决一个内容团队问题，你会选哪个？",type:"select",options:["提高爆款率","减少返工","提升账号判断准确度","提升新人培养效率","提升复盘质量","统一内容标准"],note_label:"为什么先选它？",note_suffix:"（打字补充，越具体越好）",note_placeholder:"为什么先选它？为什么不是其他几个？请写出具体理由。"},
+
+      {id:"qh2",title:"你认为当前最大问题是这个，有什么证据能证明？",type:"text",note_prompt:"请写真实数据、案例、最近一次会议/复盘/返工情况。不要只写感觉。"},
+
+      {id:"qh3",title:"有没有可能你判断的最大问题不是真正的问题？",type:"text",note_prompt:"如果要推翻你现在的判断，需要看到什么证据？"},
+
+      {id:"qh4",title:"一个新人什么时候算「可以独立负责一个账号/内容方向」？",type:"text",note_prompt:"请写 3 条可观察标准，最好新人照着也能判断。不是感觉，是行为或结果标准。"},
+
+      {id:"qh5",title:"如果只能把你脑子里的 3 个判断沉淀给 AI，你会先沉淀哪 3 个？",type:"text",note_prompt:"例如选题判断、账号阶段判断、人设判断、脚本可拍判断、复盘归因判断等。写具体判断标准，不是愿望。"},
+
+      // --- 落地 ---
+      {id:"q6",title:"你们现在已有哪类提效方法？",type:"select",options:["提示词","表格模板","脚本工具","复盘模板","检查清单","自动整理","还没有固定用法"],note_label:"补充",note_suffix:"",note_placeholder:"具体用的是什么工具/模板？"},
+      {id:"q7",title:"如果下周只验证一个小提效动作，你想先验证什么？",type:"select",options:["脚本可拍检查","拍摄前检查","后期返工归因","评论反馈归类","账号阶段判断","新人训练清单","内容复盘模板"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？预期什么效果？"},
+      {id:"q8",title:"你最希望编导补充哪类真实信息？",type:"select",options:["每周最花时间的动作","返工案例","AI脚本不好用原因","拍摄现场问题","后期沟通问题","他们自己的判断标准"],note_label:"补充",note_suffix:"",note_placeholder:"为什么需要这些信息？"}
+    ]
+  },
+
+  /* ============================================================
+     内容编导 — v3：保持实操，细致追问 + 拍摄前检查
+     ============================================================ */
+  content_editor: {
+    intro: "这份问卷想知道你每周真实花时间的动作、最容易返工的地方、最希望被工具帮到的事。越具体，后面帮你省时间的工具越准。",
+    questions: [
+      {id:"q1",title:"你每周最花时间的是哪一块？",type:"select",options:["脚本","拍摄","跟后期","改稿","找素材","看账号","复盘","沟通确认"],note_label:"补充",note_suffix:"",note_placeholder:"具体哪类内容最花时间？"},
+      {id:"q2",title:"最近一次让你觉得很耗时间的是哪条内容？",type:"text",note_prompt:"写清楚当时卡在哪里、花了多久、最后怎么解决。"},
+      {id:"q3",title:"最常返工的是哪一步？",type:"select",options:["脚本重写","开头重改","拍摄补拍","口播状态不对","素材不够","剪辑方向不对","字幕/包装反复改","账号感觉不对"],note_label:"补充",note_suffix:"",note_placeholder:"最近一次返工是什么情况？"},
+      {id:"q4",title:"讲一个最近返工最多的案例。",type:"text",note_prompt:"第一次为什么不行？后来改了什么？改了几轮？最后改对了什么？"},
+      {id:"q5",title:"AI 脚本不好用时，通常是哪儿不好？AI 要写准脚本最缺什么输入？",type:"select",options:["选题不准/方向不对","结构不顺/逻辑乱","开头弱/不抓人","人设不贴/像别人","语言不像真人","不可拍/太书面","账号人设信息不够","过往爆款参考不够","目标用户不清晰","真实案例/故事不够"],note_label:"补充具体例子",note_suffix:"",note_placeholder:"举一个最近的具体例子……"},
+      {id:"q6",title:"讲一个最近 AI 脚本不好用的具体案例。",type:"text",note_prompt:"原稿哪里不行？你怎么改？改完为什么更好？"},
+      {id:"q7",title:"也讲一个 AI 脚本帮到你的案例。",type:"text",note_prompt:"它哪里帮到你？你输入了什么？结果为什么可用？"},
+
+      // ===== 具体追问 =====
+      {id:"qh1",title:"最近一次 AI 脚本不好用，你最终手改了哪 3 处？",type:"text",note_prompt:"比如开头、结构、语言、人设、画面、拍摄可执行性。不是「不好用」，是具体改了哪 3 处。"},
+      {id:"qh2",title:"哪类内容 AI 最容易写错？",type:"select",options:["情绪类","人设类","故事类","干货类","带货类","观点类","口播类","剧情类"],note_label:"为什么这类最容易错？",note_suffix:"（最好举一个例子）",note_placeholder:"为什么这类最容易错？举一个真实例子……"},
+      {id:"qh3",title:"如果 AI 在拍摄前帮你检查，你最希望它检查哪 5 项？",type:"select",options:["开头是否抓人","语言是否像本人","是否有具体画面","是否可拍","是否方便后期剪","是否符合账号风格","是否有爆点","是否踩雷","素材是否够","拍摄成本是否过高"],note_label:"为什么这 5 项最重要？",note_suffix:"（打字说明）",note_placeholder:"说说为什么这 5 项最重要……"},
+
+      {id:"q8",title:"你判断一条脚本能不能拍，最看什么？",type:"select",options:["有没有具体画面","口播是否像本人","信息是否够清楚","开头是否能抓人","拍摄成本是否可控","后期能不能接住","账号风格是否贴"],note_label:"补充",note_suffix:"",note_placeholder:"举个例子……"},
+      {id:"q9",title:"拍摄现场最容易出问题的是什么？跟后期最容易说不清的是什么？",type:"select",options:["达人状态不对","表达不像本人","画面不好拍","临场补信息","素材不够","时间不够","脚本太书面","节奏/重点信息说不清","画面选择/字幕包装分歧","账号风格/情绪感觉对不齐"],note_label:"补充例子",note_suffix:"",note_placeholder:"最近一次出问题是什么情况？"},
+      {id:"q10",title:"如果 AI 只能先帮你省一个动作，你选哪个？",type:"select",options:["检查脚本能不能拍","拍摄前准备清单","提醒账号人设/风格","整理给后期的要求","总结返工原因","归类评论/反馈","整理素材清单","记录选题和账号观察"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"},
+      {id:"q11",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["给清楚标准","减少反复确认","提供账号案例","明确不能做什么","提前判断方向","复盘返工原因","给拍摄前检查表","统一后期要求"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"},
+      {id:"q12",title:"有什么你希望负责人知道，但平时不一定会说的？",type:"text",note_prompt:"想说啥说啥，不用正式。"}
+    ]
+  },
+
+  /* ============================================================
+     经纪负责人/管理层 — v3：从签约流程到判断力命题
+     ============================================================ */
+  broker_leader: {
+    intro: "这份问卷重点看你的签约判断——怎么评估达人、怎么判断取舍、怎么沉淀标准。目的是帮你和团队提高签约质量，判断越具体，后面工具越准。",
+    questions: [
+      // ===== 高阶判断 =====
+      {id:"qh1",title:"一个达人当前月收入 10 万，你怎么判断他未来有没有机会做到 30 万/月？",type:"text",note_prompt:"请写你的判断路径，不要只写「看潜力」。看什么数据？什么趋势？什么条件？"},
+
+      {id:"qh2",title:"什么样的达人即使数据不错，你也不建议签？",type:"text",note_prompt:"请写具体红线，例如配合度、稳定性、内容风险、商业化天花板、公司承接难度等。"},
+
+      {id:"qh3",title:"对方拒绝 50% 分成时，你认为本质上通常是在拒绝什么？",type:"select",options:["钱","不信任公司","不相信增量","害怕失去控制权","觉得不公平","觉得公司服务不值","对未来收入预期不同","被其他机构影响"],note_label:"你通常怎么判断是哪一种？",note_suffix:"（写判断方法）",note_placeholder:"你怎么判断对方是哪一种？有没有案例证明？"},
+
+      {id:"qh4",title:"如果让 AI 帮你做达人初筛，你希望它必须看哪 8 个信息？",type:"select",options:["当前月收入","粉丝量","近30天涨粉","近30天播放","内容稳定性","商业化方式","报价/收入结构","人设稀缺性","账号风险","配合意愿","公司可承接度","未来增长空间"],note_label:"你认为最关键的前三个是什么？",note_suffix:"（打字说明）",note_placeholder:"写最关键的前三个，以及为什么是它们……"},
+
+      {id:"qh5",title:"最近一个成功签约案例，真正打动对方的是什么？",type:"text",note_prompt:"不要只写「沟通顺利」，请写清楚是利益判断、信任、资源、案例、服务能力、还是未来预期。对方算了一笔什么账？"},
+
+      // --- 基础 ---
+      {id:"q1",title:"你这条线现在最重要的结果是什么？",type:"select",options:["签约数量","签约质量","缩短签约周期","提高转化率","筛掉低价值达人","统一判断标准","降低沟通成本"],note_label:"补充",note_suffix:"",note_placeholder:"说说你选这个的原因……"},
+      {id:"q3",title:"签约最难卡在哪一步？",type:"select",options:["找不到高质量达人","判断不准值不值得签","50%分成对方不接受","内部成本重","沟通推进慢","成熟达人难复制","材料准备不专业","后续承接不确定"],note_label:"补充",note_suffix:"",note_placeholder:"最近一次卡住是什么情况？"},
+      {id:"q4",title:"你判断一个达人值得长期签，最看哪些标准？",type:"select",options:["当前收入","未来增长空间","内容能力","商业化能力","合作意愿","稳定性","风险点","公司可承接度","50%接受概率","稀缺性"],note_label:"补充",note_suffix:"",note_placeholder:"哪个标准权重最高？为什么？"},
+      {id:"q8",title:"你们现在有没有评分表、话术、资料模板或 AI 用法？",type:"select",options:["达人评分表","沟通话术","分成异议回复","资料模板","跟进表","AI总结","还没有固定用法"],note_label:"补充",note_suffix:"",note_placeholder:"具体是什么模板/工具？"},
+      {id:"q9",title:"如果下周只验证一个签约提效动作，你想先验证什么？",type:"select",options:["候选达人评分卡","50%异议回复","沟通前资料准备","失败案例复盘","下一步跟进提醒","高价值达人筛选标准"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"}
+    ]
+  },
+
+  /* ============================================================
+     经纪 — v3：保持实操，加判断追问 + 话术卡点
+     ============================================================ */
+  broker: {
+    intro: "这份问卷重点看你推进签约时最真实的卡点和判断。不是考核，是把重复动作和经验收上来，后面看哪些能被工具或话术帮到。",
+    questions: [
+      {id:"q1",title:"你每周最花时间的是哪件事？",type:"select",options:["找人","看数据","整理资料","首轮沟通","反复跟进","谈分成","写汇报","判断值不值得聊"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"},
+      {id:"q2",title:"你推进签约时最卡的是哪一步？",type:"select",options:["对方不回","不知道怎么判断价值","50%分成被拒","不知道怎么说服","资料准备慢","跟进节奏乱","对方要求太高","内部判断不确定"],note_label:"补充",note_suffix:"",note_placeholder:"最近一次卡住是什么情况？"},
+
+      // ===== 判断追问 =====
+      {id:"qh1",title:"你判断一个达人值得继续聊，最重要的 3 个信号是什么？",type:"select",options:["当前收入高","内容能力强","商业化强","愿意沟通","有增长空间","对公司服务感兴趣","有明显痛点","对现状不满意","竞品机构没服务好","能接受分成逻辑"],note_label:"你最近遇到过哪个案例？",note_suffix:"（打字说明）",note_placeholder:"举一个最近的例子，对方有什么信号让你觉得值得继续聊……"},
+      {id:"qh2",title:"对方拒绝时，哪类你觉得还能挽回？哪类你会放弃？",type:"text",note_prompt:"请写真实判断，不用写标准答案。写清楚分类标准和判别逻辑。"},
+      {id:"qh3",title:"你最常卡住的是哪类话术？",type:"select",options:["开场破冰","介绍公司","证明公司能带来增量","解释50%分成","处理对方不信任","处理对方嫌分成高","约下一次沟通","推动签约"],note_label:"请写一句你当时不知道怎么回的话",note_suffix:"（越原话越好）",note_placeholder:"写一句你当时不知道怎么回的原话……"},
+
+      {id:"q3",title:"讲一个你觉得值得签但没签下来的案例。",type:"text",note_prompt:"写对方情况、卡在哪、你当时怎么推进。"},
+      {id:"q4",title:"对方拒绝 50% 分成时，通常怎么说？",type:"text",note_prompt:"尽量写原话。"},
+      {id:"q5",title:"讲一个沟通比较顺的案例。",type:"text",note_prompt:"写对方为什么愿意继续聊，哪句话或哪个材料有用。"},
+      {id:"q6",title:"如果 AI 先帮你省一个动作，你最想省哪个？",type:"select",options:["整理达人资料","判断值不值得聊","沟通前准备","跟进话术","分成异议回复","总结沟通记录","提醒下一步","生成汇报"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"},
+      {id:"q7",title:"你现在怎么判断一个达人值得继续聊？",type:"select",options:["当前收入高","内容能力强","商业化强","人设稀缺","愿意配合","增长空间大","风险低","公司能帮上忙"],note_label:"补充",note_suffix:"",note_placeholder:"你平时最看哪个信号？"},
+      {id:"q8",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["明确筛选标准","给更好话术","帮忙判断高价值达人","给资料模板","复盘失败案例","明确下一步动作","减少重复汇报"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"}
+    ]
+  }
+};
+
+/* ============================================================
+   State
+   ============================================================ */
+var currentRole = null;
+var isDirectLink = false;
+var questions = [];
+var currentStep = -1;
+var answers = {};
+var API_BASE = 'https://interview-app-phi-ten.vercel.app';
+
+/* ============================================================
+   Screen Navigation
+   ============================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function selectRole(role) {
+  currentRole = role;
+  showScreen('interview');
+  loadQuestions(role);
+}
+
+function goBack() {
+  if (isDirectLink) return;
+  currentRole = null; questions = []; currentStep = -1; answers = {};
+  showScreen('role');
+}
+
+/* ============================================================
+   Build Progress Dots
+   ============================================================ */
+function buildProgressDots(total, current) {
+  var html = '';
+  for (var i = 0; i < total; i++) {
+    var cls = 'progress-dot';
+    if (i < current) cls += ' done';
+    else if (i === current) cls += ' active';
+    html += '<span class="' + cls + '"></span>';
+  }
+  return html;
+}
+
+/* ============================================================
+   Load Questions
+   ============================================================ */
+var ROLE_NAMES = {
+  content_leader: '内容负责人/管理层',
+  content_editor: '内容编导',
+  broker_leader: '经纪负责人/管理层',
+  broker: '经纪'
+};
+
+// 兼容旧角色 ID（content_manager → content_leader, broker_manager → broker_leader）
+var ROLE_ALIASES = {
+  content_manager: 'content_leader',
+  broker_manager: 'broker_leader'
+};
+
+function loadQuestions(role) {
+  if (ROLE_ALIASES[role]) role = ROLE_ALIASES[role];
+  currentRole = role;
+  var data = ALL_QUESTIONS[role];
+  if (!data) {
+    document.getElementById('question-area').innerHTML = '<div class="msg-error">未知岗位类型</div>';
+    return;
+  }
+  document.getElementById('interview-title').textContent = ROLE_NAMES[role] + ' · 岗位提效采访';
+  document.getElementById('interview-subtitle').textContent = '按真实情况写，不用正式，越具体越有用';
+  questions = data.questions;
+  document.getElementById('intro-text').textContent = data.intro || '';
+  answers = {};
+  currentStep = -1;
+
+  // Check for saved draft
+  var draft = loadDraft();
+  if (draft) {
+    answers = draft.answers || {};
+    document.getElementById('input-name').value = draft.name || '';
+    currentStep = draft.currentStep;
+    document.getElementById('intro-text').classList.add('hidden');
+    showInfoScreen();
+    document.getElementById('btn-next').textContent = '继续答题（已恢复草稿）';
+    return;
+  }
+
+  showInfoScreen();
+}
+
+function showInfoScreen() {
+  document.getElementById('info-section').classList.remove('hidden');
+  document.getElementById('intro-text').classList.add('hidden');
+  document.getElementById('progress-section').classList.add('hidden');
+  document.getElementById('question-area').innerHTML = '';
+  document.getElementById('btn-prev').classList.add('hidden');
+  document.getElementById('btn-next').classList.remove('hidden');
+  document.getElementById('btn-submit').classList.add('hidden');
+  document.getElementById('btn-next').textContent = '开始答题';
+  document.getElementById('submit-msg').innerHTML = '';
+}
+
+function renderQuestion(idx) {
+  if (idx < 0 || idx >= questions.length) return;
+  document.getElementById('info-section').classList.add('hidden');
+  document.getElementById('progress-section').classList.remove('hidden');
+  document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, idx);
+
+  var q = questions[idx];
+  var existing = answers[q.id];
+  var note = '';
+  var selected = [];
+  var textVal = '';
+
+  if (existing) {
+    if (typeof existing === 'object') { note = existing.note || ''; selected = existing.selected || []; }
+    else { textVal = existing; }
+  }
+
+  var html = '<div class="question-card">';
+  html += '<div class="question-num">第 ' + (idx+1) + ' 题 / 共 ' + questions.length + ' 题</div>';
+  html += '<div class="question-title">' + q.title + '</div>';
+  if (q.note_prompt) html += '<div class="question-prompt">' + escHtml(q.note_prompt) + '</div>';
+
+  if (q.type === 'select') {
+    html += '<div class="options-grid">';
+    q.options.forEach(function(opt){
+      var sel = selected.indexOf(opt) >= 0 ? ' selected' : '';
+      html += '<span class="option-chip' + sel + '" onclick="toggleOption(this,\'' + q.id + '\',\'' + escAttr(opt) + '\')">' + opt + '</span>';
+    });
+    html += '</div>';
+    var noteLabel = q.note_label || '补充你的想法';
+    var noteSuffix = q.note_suffix || '（打字补充，越具体越好）';
+    var notePh = q.note_placeholder || '说说你选这个的原因、遇到的具体情况……';
+    html += '<div class="note-wrap">';
+    html +=   '<div class="note-label">';
+    html +=     '<svg class="icon-pencil" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+    html +=     noteLabel;
+    html +=     '<span style="font-weight:400;opacity:0.6;margin-left:4px;">' + noteSuffix + '</span>';
+    html +=   '</div>';
+    html +=   '<textarea class="note-input" placeholder="' + escAttr(notePh) + '" id="note-' + q.id + '" oninput="updateNote(\'' + q.id + '\', this.value); updateCharCount(this, \'count-' + q.id + '\')">' + escHtml(note) + '</textarea>';
+    html +=   '<div class="note-hint" id="count-' + q.id + '"></div>';
+    html += '</div>';
+  } else {
+    html += '<textarea class="text-input" placeholder="' + escAttr(q.note_prompt || '') + '" id="text-' + q.id + '" onchange="updateText(\'' + q.id + '\', this.value)">' + escHtml(textVal) + '</textarea>';
+  }
+  html += '</div>';
+  document.getElementById('question-area').innerHTML = html;
+
+  document.getElementById('btn-prev').classList.toggle('hidden', idx === 0);
+  document.getElementById('btn-next').classList.toggle('hidden', idx === questions.length - 1);
+  document.getElementById('btn-submit').classList.toggle('hidden', idx !== questions.length - 1);
+  document.getElementById('btn-next').textContent = '下一题';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Init char counts for existing notes
+  var noteEl = document.getElementById('note-' + questions[idx].id);
+  if (noteEl) updateCharCount(noteEl, 'count-' + questions[idx].id);
+}
+
+function nextQuestion() {
+  saveCurrentAnswer();
+  saveDraft();
+  if (currentStep === -1) { currentStep = 0; renderQuestion(0); return; }
+  currentStep++;
+  if (currentStep >= questions.length) currentStep = questions.length - 1;
+  renderQuestion(currentStep);
+}
+
+function prevQuestion() {
+  saveCurrentAnswer();
+  saveDraft();
+  currentStep--;
+  if (currentStep < 0) { showInfoScreen(); return; }
+  renderQuestion(currentStep);
+}
+
+/* ============================================================
+   Answers
+   ============================================================ */
+function toggleOption(el, qid, opt) {
+  el.classList.toggle('selected');
+  var sels = [];
+  el.parentElement.querySelectorAll('.option-chip.selected').forEach(function(c){ sels.push(c.textContent.trim()); });
+  if (!answers[qid] || typeof answers[qid] === 'string') answers[qid] = {selected:[], note:''};
+  answers[qid].selected = sels;
+  saveDraft();
+}
+
+function updateNote(qid, val) {
+  if (!answers[qid] || typeof answers[qid] === 'string') answers[qid] = {selected:[], note:''};
+  answers[qid].note = val;
+  saveDraft();
+}
+
+function updateCharCount(el, countId) {
+  var count = el.value.length;
+  var display = document.getElementById(countId);
+  if (!display) return;
+  if (count > 0) { display.textContent = '已输入 ' + count + ' 字'; }
+  else { display.textContent = ''; }
+}
+
+function updateText(qid, val) { answers[qid] = val; saveDraft(); }
+
+function saveCurrentAnswer() {
+  if (currentStep >= 0 && currentStep < questions.length) {
+    var q = questions[currentStep];
+    if (q.type === 'text') {
+      var el = document.getElementById('text-' + q.id);
+      if (el) answers[q.id] = el.value;
+    }
+    // Note: select-type notes are already saved in real-time via oninput on the textarea
+  }
+}
+
+/* ============================================================
+   Draft Auto-Save
+   ============================================================ */
+function getDraftKey() { return 'interview_draft_' + currentRole; }
+
+function saveDraft() {
+  if (!currentRole) return;
+  try {
+    var name = document.getElementById('input-name').value.trim();
+    var draft = { role: currentRole, name: name, answers: answers, currentStep: currentStep, savedAt: Date.now() };
+    localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+  } catch(e) {}
+}
+
+function loadDraft() {
+  if (!currentRole) return false;
+  try {
+    var raw = localStorage.getItem(getDraftKey());
+    if (!raw) return false;
+    var draft = JSON.parse(raw);
+    if (!draft || !draft.answers || Object.keys(draft.answers).length === 0) return false;
+    // Expire drafts older than 72 hours
+    if (Date.now() - draft.savedAt > 72 * 3600 * 1000) return false;
+    return draft;
+  } catch(e) { return false; }
+}
+
+function clearDraft() {
+  if (!currentRole) return;
+  try { localStorage.removeItem(getDraftKey()); } catch(e) {}
+}
+
+/* ============================================================
+   Submit
+   ============================================================ */
+async function submitForm() {
+  saveCurrentAnswer();
+  var btn = document.getElementById('btn-submit');
+  var name = document.getElementById('input-name').value.trim();
+
+  if (!name) {
+    document.getElementById('submit-msg').innerHTML = '<div class="msg-error">请先填写你的名字</div>';
+    return;
+  }
+
+  // Minimum character check for text questions
+  var shortQuestions = checkMinChars();
+  if (shortQuestions.length > 0 && document.getElementById('submit-msg').innerHTML === '') {
+    var labels = shortQuestions.map(function(i){ return '第' + (i+1) + '题'; }).join('、');
+    document.getElementById('submit-msg').innerHTML = '<div class="msg-warn">' + labels + ' 内容较少（不足10字），补充细节会让结果更有用。<br><button class="btn btn-next" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="forceSubmit()">仍要提交</button> <button class="btn btn-prev" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="goToShortest(' + shortQuestions[0] + ')">回去补充</button></div>';
+    return;
+  }
+
+  forceSubmit();
+}
+
+function checkMinChars() {
+  var short = [];
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    if (q.type !== 'text') continue;
+    var val = answers[q.id];
+    if (!val || (typeof val === 'string' && val.trim().length < 10)) {
+      short.push(i);
+    }
+  }
+  return short;
+}
+
+function goToShortest(idx) {
+  document.getElementById('submit-msg').innerHTML = '';
+  currentStep = idx;
+  renderQuestion(currentStep);
+}
+
+function forceSubmit() {
+  var btn = document.getElementById('btn-submit');
+  document.getElementById('submit-msg').innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = '提交中…';
+  document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, questions.length);
+  doSubmit();
+}
+
+async function doSubmit() {
+  var name = document.getElementById('input-name').value.trim();
+  var btn = document.getElementById('btn-submit');
+  var payload = { role: currentRole, name: name, position: '', answers: answers };
+  var submitted = false;
+
+  try {
+    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    var result = await resp.json();
+    if (result.success) submitted = true;
+  } catch(e) {}
+
+  if (submitted) {
+    clearDraft();
+    document.getElementById('complete-icon').textContent = '🎉';
+    document.getElementById('complete-title').textContent = '提交成功';
+    document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
+    showScreen('complete');
+  } else {
+    fallbackSave(payload);
+    document.getElementById('complete-icon').textContent = '✅';
+    document.getElementById('complete-title').textContent = '已保存';
+    document.getElementById('complete-desc').textContent = '数据已记录，管理员稍后会处理。感谢你的时间。';
+    showScreen('complete');
+  }
+}
+
+function showCopyModal(payload) {
+  document.getElementById('modal-json').value = JSON.stringify(payload, null, 2);
+  document.getElementById('modal-copy').classList.remove('hidden');
+}
+
+function copyModalJSON() {
+  var ta = document.getElementById('modal-json');
+  ta.select();
+  try { navigator.clipboard.writeText(ta.value); } catch(e) { document.execCommand('copy'); }
+  var btn = document.querySelector('#modal-copy .btn-submit');
+  btn.textContent = '已复制';
+  setTimeout(function(){ btn.textContent = '复制到剪贴板'; }, 2000);
+}
+
+function closeModal() {
+  document.getElementById('modal-copy').classList.add('hidden');
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit').textContent = '重新提交';
+}
+
+function fallbackSave(payload) {
+  try {
+    var queue = JSON.parse(localStorage.getItem('interview_queue') || '[]');
+    payload._savedAt = new Date().toISOString();
+    queue.push(payload);
+    localStorage.setItem('interview_queue', JSON.stringify(queue));
+    document.getElementById('submit-msg').innerHTML =
+      '<div class="msg-success">已保存到本地（第 ' + queue.length + ' 份待同步）<br><small>管理员稍后将统一上传到飞书</small></div>';
+  } catch(e) {
+    document.getElementById('submit-msg').innerHTML =
+      '<div class="msg-error">提交失败，请刷新页面重试<br><small>错误: ' + escHtml(e.message) + '</small></div>';
+  }
+}
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+function escHtml(s) { if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { if(!s)return''; return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+/* ============================================================
+   Connection check
+   ============================================================ */
+(function checkServer() {
+  var dot = document.getElementById('status-dot');
+  var txt = document.getElementById('status-text');
+  fetch(API_BASE + '/api/health').then(function(r){ return r.json(); }).then(function(d){
+    if(d && d.feishu_connected){ dot.className = 'status-dot online'; txt.textContent = '飞书已连接'; }
+    else { txt.textContent = '连接中…'; }
+  }).catch(function(){ txt.textContent = '离线模式'; });
+})();
+
+/* ============================================================
+   URL Role Detection — key feature!
+   ============================================================ */
+(function detectRoleFromURL() {
+  var params = new URLSearchParams(location.search);
+  var role = params.get('role');
+  // 兼容旧角色 ID
+  if (ROLE_ALIASES[role]) role = ROLE_ALIASES[role];
+  if (role && ALL_QUESTIONS[role]) {
+    isDirectLink = true;
+    document.getElementById('back-link').classList.add('hidden');
+    selectRole(role);
+  }
+})();
+</script>
+</body>
+</html>

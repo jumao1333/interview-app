@@ -161,7 +161,7 @@ async function loadAll() {
   var roles = ['content_leader','content_editor','broker_leader','broker'];
   for (var i = 0; i < roles.length; i++) {
     try {
-      var resp = await fetch(API_BASE + '/api/records?role=' + roles[i]);
+      var resp = await fetch(API_BASE + '/api/submit?role=' + roles[i]);
       var json = await resp.json();
       if (json.success) {
         allData[roles[i]] = json;

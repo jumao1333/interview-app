@@ -1266,10 +1266,15 @@ async function doSubmit() {
   var submitted = false;
 
   try {
-    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, 15000);
+    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
+    clearTimeout(timer);
     var result = await resp.json();
     if (result.success) submitted = true;
-  } catch(e) {}
+  } catch(e) {
+    console.log('Submit error:', e.message || e);
+  }
 
   if (submitted) {
     clearDraft();

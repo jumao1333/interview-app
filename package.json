@@ -1,0 +1,13 @@
+{
+  "name": "interview-app",
+  "version": "1.0.0",
+  "description": "岗位提效采访系统 — 麦芽MCN",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

@@ -233,6 +233,21 @@ body::before {
   -webkit-backdrop-filter: blur(20px);
 }
 
+.question-count-card {
+  background: rgba(41,151,255,0.08);
+  border: 1px solid rgba(41,151,255,0.18);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--accent);
+  line-height: 1.8;
+}
+.question-count-card span { color: var(--text); font-weight: 500; }
+.required-badge { display:inline-block; background:rgba(255,69,58,0.2); color:#ff453a; font-size:11px; padding:1px 8px; border-radius:4px; margin-left:6px; vertical-align:middle; font-weight:600; }
+.toast-warn { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(255,69,58,0.9); color:#fff; padding:12px 24px; border-radius:12px; font-size:14px; z-index:100; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+.toast-warn.show { opacity:1; }
+
 .field { margin-bottom: 14px; }
 .field:last-child { margin-bottom: 0; }
 
@@ -685,6 +700,8 @@ body::before {
 
     <div class="intro-box" id="intro-text"></div>
 
+    <div class="question-count-card" id="question-count"></div>
+
     <div id="info-section" class="info-card hidden">
       <div class="field">
         <label>你的名字</label>
@@ -721,6 +738,8 @@ body::before {
   <span class="status-dot" id="status-dot"></span>
   <span id="status-text">检查连接…</span>
 </div>
+
+<div id="toast-warn" class="toast-warn"></div>
 
 <!-- Modal for offline fallback -->
 <div id="modal-copy" class="modal-overlay hidden">
@@ -771,8 +790,8 @@ var ALL_QUESTIONS = {
       {id:"qh6",title:"讲一个你判断会爆、但最后没爆（或反过来）的内容——复盘后你修正了哪条判断？",type:"text",note_prompt:"写清楚当初的判断是什么、结果是什么、复盘后哪条判断标准改了。"},
 
       // ===== 数字锚点 =====
-      {id:"q9",title:"你团队上月的核心数字——编导人均产出几条、其中返工超过 1 次的有几条——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",note_prompt:"例：编导8人，人均产出4条/月，其中返工>1次的有2条。直接写数字；没有就说'没有'——这本身也是答案。"},
-      {id:"q10",title:"你上周花在「重复沟通/反复确认」上的时间，大概占工作时长的百分之多少？",type:"text",note_prompt:"不用精确，估算即可。例：20%、30%。目的是建立时间基线。"}
+      {id:"q9",title:"你团队上月的核心数字——编导人均产出几条、其中返工超过 1 次的有几条——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",required:true,note_prompt:"例：编导8人，人均产出4条/月，其中返工>1次的有2条。直接写数字；没有就说'没有'——这本身也是答案。"},
+      {id:"q10",title:"你上周花在「重复沟通/反复确认」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：20%、30%。目的是建立时间基线。"}
     ]
   },
   /* ============================================================
@@ -805,8 +824,8 @@ var ALL_QUESTIONS = {
       {id:"qh4",title:"讲一个你判断会爆、但最后没爆（或反过来）的内容——复盘后你修正了哪条判断？",type:"text",note_prompt:"写清楚当初的判断是什么、结果是什么、复盘后哪条判断标准改了。失误样本比成功案例更值钱。"},
 
       // ===== 数字锚点 =====
-      {id:"q11",title:"上周你的工作时长大概怎么分？写前三项各占几小时。",type:"text",note_prompt:"不用精确，估算即可。例：脚本12h / 拍摄10h / 剪辑沟通6h。目的是建立时间基线。"},
-      {id:"q12",title:"上月你产出几条内容、其中返工超过 1 次的几条？",type:"text",note_prompt:"写具体数字。例：产出12条，返工>1次的有3条。如果答不出，说明还没建立基线——这正是后面工具该先帮你建立的。"},
+      {id:"q11",title:"上周你的工作时长大概怎么分？写前三项各占几小时。",type:"text",required:true,note_prompt:"不用精确，估算即可。例：脚本12h / 拍摄10h / 剪辑沟通6h。目的是建立时间基线。"},
+      {id:"q12",title:"上月你产出几条内容、其中返工超过 1 次的几条？",type:"text",required:true,note_prompt:"写具体数字。例：产出12条，返工>1次的有3条。如果答不出，说明还没建立基线——这正是后面工具该先帮你建立的。"},
     ]
   },
 
@@ -837,7 +856,7 @@ var ALL_QUESTIONS = {
 
       {id:"q9",title:"50% 分成这个政策本身，什么情况下你认为该让步？让出的 10% 买的是什么？",type:"text",note_prompt:"不要只写「看情况」。写具体场景——例如对方自带资源、对方是稀缺类型、公司战略需要……让出的 10% 换来了什么。"},
 
-      {id:"q10",title:"你团队上月的核心数字——签约转化率、人均签约数——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",note_prompt:"例：转化率15%，人均签约2个/月。直接写数字；没有就说'没有'——这本身也是答案。"},,
+      {id:"q10",title:"你团队上月的核心数字——签约转化率、人均签约数——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",required:true,note_prompt:"例：转化率15%，人均签约2个/月。直接写数字；没有就说'没有'——这本身也是答案。"},
 
       {id:"q11",title:"给你 3 个名额扩编 vs 把现有人均签约质量提 20%，你选哪个？为什么？",type:"text",note_prompt:"选完后补充：你选这个背后的判断是什么？资源有限时，你的优先级怎么排？"},
 
@@ -845,7 +864,7 @@ var ALL_QUESTIONS = {
       {id:"qh6",title:"讲一个你 pass 掉、后来在别家起飞的达人——你当时漏看了什么信号？这条现在进你的筛选标准了吗？",type:"text",note_prompt:"写清楚当初的判断、后来看到的结果、哪条信号你当时没看懂。失误样本比成功案例更值钱。"},
 
       // ===== 数字锚点 =====
-      {id:"q12",title:"上周你花在「反复沟通/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",note_prompt:"不用精确，估算即可。例：25%、40%。目的是建立你的时间基线。"}
+      {id:"q12",title:"上周你花在「反复沟通/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：25%、40%。目的是建立你的时间基线。"}
     ]
   },
 
@@ -874,8 +893,8 @@ var ALL_QUESTIONS = {
       {id:"qh4",title:"讲一个你 pass 掉、后来在别家起飞的达人——你当时漏看了什么信号？这条现在进你的筛选标准了吗？",type:"text",note_prompt:"写清楚当初的判断、后来看到的结果、哪条信号你当时没看懂。失误样本比成功案例更值钱。"},
 
       // ===== 数字锚点 =====
-      {id:"q9",title:"上月你接触了多少达人 → 深聊几个 → 签约几个？写具体数字。",type:"text",note_prompt:"不用精确，估算即可。例：接触30 → 深聊8 → 签2。目的是建立你的转化基线。如果答不出，说明还没建立基线。"},
-      {id:"q10",title:"上周你花在「反复跟进/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",note_prompt:"不用精确，估算即可。例：30%、50%。目的是建立时间基线。"}
+      {id:"q9",title:"上月你接触了多少达人 → 深聊几个 → 签约几个？写具体数字。",type:"text",required:true,note_prompt:"不用精确，估算即可。例：接触30 → 深聊8 → 签2。目的是建立你的转化基线。如果答不出，说明还没建立基线。"},
+      {id:"q10",title:"上周你花在「反复跟进/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：30%、50%。目的是建立时间基线。"}
     ]
   }
 };
@@ -919,9 +938,16 @@ function buildProgressDots(total, current) {
     var cls = 'progress-dot';
     if (i < current) cls += ' done';
     else if (i === current) cls += ' active';
-    html += '<span class="' + cls + '"></span>';
+    html += '<span class="' + cls + '" onclick="goToQuestion(' + i + ')" style="cursor:pointer" title="第 ' + (i+1) + ' 题"></span>';
   }
   return html;
+}
+
+function goToQuestion(idx) {
+  saveCurrentAnswer();
+  saveDraft();
+  currentStep = idx;
+  renderQuestion(currentStep);
 }
 
 /* ============================================================
@@ -952,6 +978,20 @@ function loadQuestions(role) {
   document.getElementById('interview-subtitle').textContent = '按真实情况写，不用正式，越具体越有用';
   questions = data.questions;
   document.getElementById('intro-text').textContent = data.intro || '';
+  // 题数预告
+  var total = data.questions.length;
+  var timeMin = Math.max(5, Math.round(total * 0.8));
+  var anchorIds = [];
+  data.questions.forEach(function(q){
+    if (q.id && (q.id.indexOf('q9') >= 0 || q.id.indexOf('q10') >= 0 || q.id.indexOf('q11') >= 0 || q.id.indexOf('q12') >= 0)) {
+      if (anchorIds.indexOf(q.id) < 0) anchorIds.push(q.id);
+    }
+  });
+  var anchorCount = anchorIds.length;
+  var workCount = total - anchorCount;
+  document.getElementById('question-count').innerHTML =
+    '共 <span>' + total + ' 题</span>，约 <span>' + timeMin + ' 分钟</span>' +
+    (anchorCount > 0 ? ' —— 前 <span>' + workCount + ' 题</span> 聊工作，最后 <span>' + anchorCount + ' 题</span> 填几个数字' : '');
   answers = {};
   currentStep = -1;
 
@@ -973,6 +1013,7 @@ function loadQuestions(role) {
 function showInfoScreen() {
   document.getElementById('info-section').classList.remove('hidden');
   document.getElementById('intro-text').classList.add('hidden');
+  document.getElementById('question-count').classList.remove('hidden');
   document.getElementById('progress-section').classList.add('hidden');
   document.getElementById('question-area').innerHTML = '';
   document.getElementById('btn-prev').classList.add('hidden');
@@ -985,6 +1026,7 @@ function showInfoScreen() {
 function renderQuestion(idx) {
   if (idx < 0 || idx >= questions.length) return;
   document.getElementById('info-section').classList.add('hidden');
+  document.getElementById('question-count').classList.add('hidden');
   document.getElementById('progress-section').classList.remove('hidden');
   document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, idx);
 
@@ -1000,7 +1042,7 @@ function renderQuestion(idx) {
   }
 
   var html = '<div class="question-card">';
-  html += '<div class="question-num">第 ' + (idx+1) + ' 题 / 共 ' + questions.length + ' 题</div>';
+  html += '<div class="question-num">第 ' + (idx+1) + ' 题 / 共 ' + questions.length + ' 题' + (q.required ? ' <span class="required-badge">必答</span>' : '') + '</div>';
   html += '<div class="question-title">' + q.title + '</div>';
   if (q.note_prompt) html += '<div class="question-prompt">' + escHtml(q.note_prompt) + '</div>';
 
@@ -1044,10 +1086,24 @@ function renderQuestion(idx) {
 function nextQuestion() {
   saveCurrentAnswer();
   saveDraft();
+  // 必答软提醒：当前题为必答且未回答
+  if (currentStep >= 0 && currentStep < questions.length) {
+    var q = questions[currentStep];
+    if (q.required && !isAnswered(q.id)) {
+      showToast('此题为必答题，建议填写完毕再继续');
+    }
+  }
   if (currentStep === -1) { currentStep = 0; renderQuestion(0); return; }
   currentStep++;
   if (currentStep >= questions.length) currentStep = questions.length - 1;
   renderQuestion(currentStep);
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast-warn');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
 
 function prevQuestion() {
@@ -1129,6 +1185,14 @@ function clearDraft() {
   try { localStorage.removeItem(getDraftKey()); } catch(e) {}
 }
 
+function isAnswered(qid) {
+  var val = answers[qid];
+  if (!val) return false;
+  if (typeof val === 'string') return val.trim().length > 0;
+  if (typeof val === 'object' && val.selected && val.selected.length > 0) return true;
+  return false;
+}
+
 /* ============================================================
    Submit
    ============================================================ */
@@ -1139,6 +1203,20 @@ async function submitForm() {
 
   if (!name) {
     document.getElementById('submit-msg').innerHTML = '<div class="msg-error">请先填写你的名字</div>';
+    return;
+  }
+
+  // 必答题检查
+  var missingRequired = [];
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    if (q.required && !isAnswered(q.id)) {
+      missingRequired.push({idx: i, title: q.title});
+    }
+  }
+  if (missingRequired.length > 0) {
+    var labels = missingRequired.map(function(m){ return '第' + (m.idx+1) + '题'; }).join('、');
+    document.getElementById('submit-msg').innerHTML = '<div class="msg-error"><b>' + labels + ' 为必答题，请填写后再提交。</b><br><small>' + escHtml(missingRequired[0].title.replace(/！/g,'').replace(/？/g,'').substring(0,30) + '……') + '</small><br><button class="btn btn-prev" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="document.getElementById(\'submit-msg\').innerHTML=\'\';goToQuestion(' + missingRequired[0].idx + ')">去填写</button></div>';
     return;
   }
 
@@ -1195,18 +1273,43 @@ async function doSubmit() {
 
   if (submitted) {
     clearDraft();
+    // 提交成功：清掉本地队列里同一条（如果有的话）
+    try {
+      var q = JSON.parse(localStorage.getItem('interview_queue') || '[]');
+      localStorage.setItem('interview_queue', JSON.stringify(q.filter(function(x){ return x._savedAt !== payload._savedAt; })));
+    } catch(e) {}
     document.getElementById('complete-icon').textContent = '🎉';
     document.getElementById('complete-title').textContent = '提交成功';
     document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
     showScreen('complete');
   } else {
-    fallbackSave(payload);
-    document.getElementById('complete-icon').textContent = '✅';
-    document.getElementById('complete-title').textContent = '已保存';
-    document.getElementById('complete-desc').textContent = '数据已记录，管理员稍后会处理。感谢你的时间。';
-    showScreen('complete');
+    // 提交失败：弹复制弹窗，让用户把数据发给管理员
+    showCopyModal(payload);
   }
 }
+
+// 页面加载时自动重试本地队列里未提交的数据
+(function retryQueue() {
+  setTimeout(function() {
+    try {
+      var q = JSON.parse(localStorage.getItem('interview_queue') || '[]');
+      if (!q.length) return;
+      var remaining = [];
+      var promises = q.map(function(item) {
+        return fetch(API_BASE + '/api/submit', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(item)
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (!d.success) remaining.push(item);
+        }).catch(function() { remaining.push(item); });
+      });
+      Promise.all(promises).then(function() {
+        localStorage.setItem('interview_queue', JSON.stringify(remaining));
+      });
+    } catch(e) {}
+  }, 2000);
+})();
 
 function showCopyModal(payload) {
   document.getElementById('modal-json').value = JSON.stringify(payload, null, 2);

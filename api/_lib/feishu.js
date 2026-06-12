@@ -15,7 +15,7 @@ const TABLES = {
 };
 
 const QDATA = {
-  // v3: 5道高阶判断题 + 基础锚点 + 落地
+  // v4: +失误反演 + 数字锚点
   content_leader: [
     {id:"q1",type:"select",field_select:"Q1-最重要的结果",field_note:"Q1-补充说明"},
     {id:"q2",type:"select",field_select:"Q2-脚本外最想让AI解决什么",field_note:"Q2-补充说明"},
@@ -28,26 +28,30 @@ const QDATA = {
     {id:"q6",type:"select",field_select:"Q6-已有提效方法",field_note:"Q6-补充说明"},
     {id:"q7",type:"select",field_select:"Q7-下周验证的小提效动作",field_note:"Q7-补充说明"},
     {id:"q8",type:"select",field_select:"Q8-最希望编导补充的信息",field_note:"Q8-补充说明"},
+    {id:"qh6",type:"text",field_text:"QH6-失误反演"},
+    {id:"q9",type:"text",field_text:"Q9-核心数字基线"},
+    {id:"q10",type:"text",field_text:"Q10-上周重复沟通时间占比"},
   ],
-  // v3: 合并 q5+q6, q10+q11→q9, 偏移题号对齐旧字段, qh2改为select, 新增qh3
+  // v4: q5合并案例 + 加失误反演 + 数字锚点
   content_editor: [
     {id:"q1",type:"select",field_select:"Q1-每周最花时间",field_note:"Q1-补充说明"},
     {id:"q2",type:"text",field_text:"Q2-最近耗时内容案例"},
     {id:"q3",type:"select",field_select:"Q3-最常返工",field_note:"Q3-补充说明"},
     {id:"q4",type:"text",field_text:"Q4-返工最多案例"},
-    {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪",field_note:"Q5-补充说明"},
-    {id:"q6",type:"text",field_text:"Q7-AI脚本不好用案例"},
-    {id:"q7",type:"text",field_text:"Q8-AI脚本帮到你的案例"},
+    {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪v4",field_note:"Q5-案例说明v4"},
+    {id:"q6",type:"text",field_text:"Q6-AI脚本帮到你的案例"},
     {id:"qh1",type:"text",field_text:"QH1-AI脚本手改3处"},
     {id:"qh2",type:"select",field_select:"QH2-AI最易写错内容v3",field_note:"QH2-写错原因v3"},
     {id:"qh3",type:"select",field_select:"QH3-拍摄前检查5项",field_note:"QH3-检查原因"},
-    {id:"q8",type:"select",field_select:"Q9-判断脚本能不能拍最看什么",field_note:"Q9-补充说明"},
-    {id:"q9",type:"select",field_select:"Q10-拍摄与后期最易出问题v3",field_note:"Q10-补充说明v3"},
-    {id:"q10",type:"select",field_select:"Q12-AI先帮你省一个动作",field_note:"Q12-补充说明"},
-    {id:"q11",type:"select",field_select:"Q13-最希望负责人支持",field_note:"Q13-补充说明"},
-    {id:"q12",type:"text",field_text:"Q14-希望负责人知道但不一定说的"},
+    {id:"q7",type:"select",field_select:"Q9-判断脚本能不能拍最看什么",field_note:"Q9-补充说明"},
+    {id:"q8",type:"select",field_select:"Q10-拍摄与后期最易出问题v3",field_note:"Q10-补充说明v3"},
+    {id:"q9",type:"select",field_select:"Q12-AI先帮你省一个动作",field_note:"Q12-补充说明"},
+    {id:"q10",type:"select",field_select:"Q13-最希望负责人支持",field_note:"Q13-补充说明"},
+    {id:"qh4",type:"text",field_text:"QH4-失误反演"},
+    {id:"q11",type:"text",field_text:"Q11-上周工作时长分布"},
+    {id:"q12",type:"text",field_text:"Q12-上月产出及返工"},
   ],
-  // v3: qh4改为select, 细化所有qh题目
+  // v4: 换 q8/q9 + 加扩编题 + 失误反演 + 数字锚点
   broker_leader: [
     {id:"qh1",type:"text",field_text:"QH1-签约判断路径"},
     {id:"qh2",type:"text",field_text:"QH2-不建议签的达人"},
@@ -57,10 +61,14 @@ const QDATA = {
     {id:"q1",type:"select",field_select:"Q1-最重要的结果",field_note:"Q1-补充说明"},
     {id:"q3",type:"select",field_select:"Q3-签约最卡在哪一步",field_note:"Q3-补充说明"},
     {id:"q4",type:"select",field_select:"Q4-达人长期值得签的标准",field_note:"Q4-补充说明"},
-    {id:"q8",type:"select",field_select:"Q8-现有评分表话术模板",field_note:"Q8-补充说明"},
-    {id:"q9",type:"select",field_select:"Q9-下周验证签约提效动作",field_note:"Q9-补充说明"},
+    {id:"q8",type:"text",field_text:"Q8-v4-团队判断差距"},
+    {id:"q9",type:"text",field_text:"Q9-v4-50分成让步边界"},
+    {id:"q10",type:"text",field_text:"Q10-v4-核心数字基线"},
+    {id:"q11",type:"text",field_text:"Q11-v4-扩编vs提质量"},
+    {id:"qh6",type:"text",field_text:"QH6-失误反演"},
+    {id:"q12",type:"text",field_text:"Q12-v4-上周推进卡住时间占比"},
   ],
-  // v3: qh1改为select, 新增qh3话术卡点
+  // v4: +失误反演 + 数字锚点
   broker: [
     {id:"q1",type:"select",field_select:"Q1-每周最花时间",field_note:"Q1-补充说明"},
     {id:"q2",type:"select",field_select:"Q2-签约最卡在哪一步",field_note:"Q2-补充说明"},
@@ -73,6 +81,9 @@ const QDATA = {
     {id:"q6",type:"select",field_select:"Q6-AI先帮你省一个动作",field_note:"Q6-补充说明"},
     {id:"q7",type:"select",field_select:"Q7-判断达人值得聊的标准",field_note:"Q7-补充说明"},
     {id:"q8",type:"select",field_select:"Q8-最希望负责人支持",field_note:"Q8-补充说明"},
+    {id:"qh4",type:"text",field_text:"QH4-失误反演"},
+    {id:"q9",type:"text",field_text:"Q9-上月接触深聊签约数字"},
+    {id:"q10",type:"text",field_text:"Q10-上周跟进卡住时间占比"},
   ],
 };
 

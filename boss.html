@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>岗位提效采访 · 老板后台</title>
+<style>
+:root {
+  --bg: #000;
+  --card-bg: rgba(255,255,255,0.05);
+  --card-border: rgba(255,255,255,0.08);
+  --text: #f5f5f7;
+  --text-sub: #86868b;
+  --text-dim: #6e6e73;
+  --accent: #2997ff;
+  --success: #30d158;
+  --warn: #ff9f0a;
+  --error: #ff453a;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container { max-width: 860px; margin:0 auto; padding:40px 24px 120px; }
+h1 { font-family: var(--font-display); font-size:36px; font-weight:600; letter-spacing:-0.5px; margin-bottom:8px; }
+h2 { font-family: var(--font-display); font-size:24px; font-weight:600; margin-bottom:16px; }
+h3 { font-size:17px; font-weight:600; margin-bottom:10px; color:var(--text); }
+
+.header { text-align:center; padding:40px 0 30px; }
+.header p { color:var(--text-sub); font-size:15px; margin-top:6px; }
+
+.toolbar { display:flex; gap:10px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+.btn {
+  padding:12px 28px; border-radius:100px; font-size:14px; font-weight:500; cursor:pointer;
+  transition:all 0.2s; border:none; font-family:var(--font-body); letter-spacing:-0.2px;
+}
+.btn-primary { background:var(--accent); color:#fff; box-shadow:0 0 20px rgba(41,151,255,0.15); }
+.btn-primary:hover { background:#40a9ff; }
+.btn-secondary { background:rgba(255,255,255,0.06); color:var(--text-sub); }
+.btn-secondary:hover { background:rgba(255,255,255,0.1); color:var(--text); }
+.btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+.stat-card {
+  background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius);
+  padding:20px; text-align:center; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+}
+.stat-num { font-family:var(--font-display); font-size:42px; font-weight:600; color:var(--accent); margin-bottom:4px; }
+.stat-label { font-size:13px; color:var(--text-dim); }
+
+.section {
+  background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius);
+  padding:28px; margin-bottom:20px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+}
+
+.insight-row { display:flex; gap:12px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.05); }
+.insight-row:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.insight-score { min-width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+.insight-score.high { background:rgba(48,209,88,0.15); color:var(--success); }
+.insight-score.mid { background:rgba(255,159,10,0.15); color:var(--warn); }
+.insight-score.low { background:rgba(255,69,58,0.12); color:var(--error); }
+.insight-body { flex:1; }
+.insight-name { font-size:14px; font-weight:600; margin-bottom:4px; }
+.insight-name .role-tag { font-size:11px; color:var(--accent); font-weight:400; margin-left:6px; }
+.insight-text { font-size:13px; color:var(--text-sub); line-height:1.6; }
+
+.asset-card {
+  background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius-sm);
+  padding:16px; margin-bottom:12px;
+}
+.asset-type { font-size:12px; color:var(--accent); font-weight:600; margin-bottom:6px; letter-spacing:0.5px; }
+.asset-from { font-size:12px; color:var(--text-dim); margin-left:8px; font-weight:400; }
+.asset-content { font-size:13px; color:var(--text-sub); line-height:1.7; }
+
+.tag { display:inline-block; padding:3px 10px; border-radius:10px; font-size:11px; font-weight:500; margin-right:6px; }
+.tag-green { background:rgba(48,209,88,0.12); color:var(--success); }
+.tag-yellow { background:rgba(255,159,10,0.12); color:var(--warn); }
+.tag-red { background:rgba(255,69,58,0.1); color:var(--error); }
+.tag-blue { background:rgba(41,151,255,0.12); color:var(--accent); }
+
+.action-item { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; line-height:1.7; }
+.action-item:last-child { border-bottom:none; }
+.action-item .idx { color:var(--accent); font-weight:600; margin-right:8px; }
+
+.empty-state { text-align:center; padding:60px 20px; color:var(--text-dim); }
+.empty-state .icon { font-size:48px; display:block; margin-bottom:16px; }
+.loading { text-align:center; padding:80px 20px; }
+.spinner { width:40px; height:40px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.role-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.role-tab {
+  padding:8px 16px; border-radius:100px; font-size:13px; cursor:pointer; border:1px solid rgba(255,255,255,0.1);
+  background:transparent; color:var(--text-sub); transition:all 0.2s;
+}
+.role-tab:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
+.role-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+.progress-bar { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; margin-bottom:4px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:3px; transition:width 0.5s; }
+.progress-fill.green { background:var(--success); }
+.progress-fill.yellow { background:var(--warn); }
+.progress-fill.red { background:var(--error); }
+.progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:14px; }
+
+@media (max-width:700px) {
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .container { padding:20px 16px 80px; }
+  h1 { font-size:28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>判断力信号分析</h1>
+    <p>岗位提效采访 · 老板后台</p>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="loadAll()" id="btn-load">加载最新数据</button>
+    <button class="btn btn-secondary" onclick="window.open('/standalone.html?role=content_leader','_blank')">内容负责人问卷</button>
+    <button class="btn btn-secondary" onclick="window.open('/standalone.html?role=content_editor','_blank')">编导问卷</button>
+    <button class="btn btn-secondary" onclick="window.open('/standalone.html?role=broker_leader','_blank')">经纪负责人问卷</button>
+    <button class="btn btn-secondary" onclick="window.open('/standalone.html?role=broker','_blank')">经纪问卷</button>
+  </div>
+
+  <div id="content">
+    <div class="empty-state">
+      <span class="icon">📊</span>
+      <p>点击「加载最新数据」查看分析结果</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var API_BASE = 'https://interview-app-phi-ten.vercel.app';
+var ROLE_LABELS = {
+  content_leader: '内容负责人',
+  content_editor: '内容编导',
+  broker_leader: '经纪负责人',
+  broker: '经纪'
+};
+
+async function loadAll() {
+  var btn = document.getElementById('btn-load');
+  btn.disabled = true;
+  btn.textContent = '加载中…';
+  document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div><p style="color:var(--text-dim)">正在拉取四个岗位数据…</p></div>';
+
+  var allData = {};
+  var roles = ['content_leader','content_editor','broker_leader','broker'];
+  for (var i = 0; i < roles.length; i++) {
+    try {
+      var resp = await fetch(API_BASE + '/api/records?role=' + roles[i]);
+      var json = await resp.json();
+      if (json.success) {
+        allData[roles[i]] = json;
+      } else {
+        allData[roles[i]] = { error: json.error, records: [] };
+      }
+    } catch(e) {
+      allData[roles[i]] = { error: e.message, records: [] };
+    }
+  }
+
+  renderDashboard(allData);
+  btn.disabled = false;
+  btn.textContent = '刷新数据';
+}
+
+function renderDashboard(allData) {
+  var totalRecords = 0;
+  Object.values(allData).forEach(function(d) { totalRecords += (d.records || []).length; });
+
+  if (totalRecords === 0) {
+    document.getElementById('content').innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>暂无提交数据</p><p style="color:var(--text-dim);font-size:13px;">发送问卷链接给团队后，数据会出现在这里</p></div>';
+    return;
+  }
+
+  // Build person-level analyses
+  var allPeople = [];
+  Object.keys(allData).forEach(function(role) {
+    var records = allData[role].records || [];
+    records.forEach(function(r) {
+      var fields = r.fields || {};
+      var person = analyzePerson(role, fields);
+      allPeople.push(person);
+    });
+  });
+
+  // Sort by total score descending
+  allPeople.sort(function(a,b){ return b.totalScore - a.totalScore; });
+
+  // Stats
+  var highCount = allPeople.filter(function(p){ return p.totalScore >= 15; }).length;
+  var midCount = allPeople.filter(function(p){ return p.totalScore >= 8 && p.totalScore < 15; }).length;
+  var lowCount = allPeople.filter(function(p){ return p.totalScore < 8; }).length;
+
+  // Collect assets
+  var assets = collectAssets(allPeople);
+
+  var html = '';
+
+  // === Stats ===
+  html += '<div class="stats-row">';
+  html += '<div class="stat-card"><div class="stat-num">' + totalRecords + '</div><div class="stat-label">总提交</div></div>';
+  html += '<div class="stat-card"><div class="stat-num" style="color:var(--success)">' + highCount + '</div><div class="stat-label">高判断力</div></div>';
+  html += '<div class="stat-card"><div class="stat-num" style="color:var(--warn)">' + midCount + '</div><div class="stat-label">中等</div></div>';
+  html += '<div class="stat-card"><div class="stat-num" style="color:var(--error)">' + lowCount + '</div><div class="stat-label">需追问</div></div>';
+  html += '</div>';
+
+  // === 高判断力回答 ===
+  html += '<div class="section"><h2>高判断力回答</h2>';
+  var top = allPeople.slice(0, 3);
+  if (top.length === 0) {
+    html += '<p style="color:var(--text-dim)">暂无高判断力回答</p>';
+  } else {
+    top.forEach(function(p, i) {
+      html += '<div class="insight-row">';
+      html += '<div class="insight-score high">' + p.totalScore + '</div>';
+      html += '<div class="insight-body">';
+      html += '<div class="insight-name">' + escHtml(p.name) + '<span class="role-tag">' + ROLE_LABELS[p.role] + '</span></div>';
+      html += '<div class="insight-text">';
+      // Show top 3 signal highlights
+      var highlights = p.signals.slice(0, 3);
+      highlights.forEach(function(h) {
+        html += '<span class="tag tag-green">' + h.label + '</span>';
+      });
+      html += '<br>' + escHtml(p.bestAnswer || '(无长文本回答)');
+      html += '</div></div></div>';
+    });
+  }
+  html += '</div>';
+
+  // === 空泛回答 ===
+  html += '<div class="section"><h2>需要追问的人员</h2>';
+  var vague = allPeople.filter(function(p){ return p.totalScore < 8; });
+  if (vague.length === 0) {
+    html += '<p style="color:var(--text-dim)">当前暂无特别空泛的回答</p>';
+  } else {
+    html += '<div class="progress-bar"><div class="progress-fill red" style="width:' + (lowCount/Math.max(1,totalRecords)*100) + '%"></div></div>';
+    html += '<div class="progress-label"><span>需追问 ' + lowCount + ' 人</span><span>占总提交 ' + Math.round(lowCount/Math.max(1,totalRecords)*100) + '%</span></div>';
+    vague.forEach(function(p) {
+      html += '<div class="insight-row">';
+      html += '<div class="insight-score low">' + p.totalScore + '</div>';
+      html += '<div class="insight-body">';
+      html += '<div class="insight-name">' + escHtml(p.name) + '<span class="role-tag">' + ROLE_LABELS[p.role] + '</span></div>';
+      html += '<div class="insight-text">';
+      var missing = [];
+      if (!p.hasCase) missing.push('缺少真实案例');
+      if (!p.hasTradeoff) missing.push('未写取舍理由');
+      if (!p.hasEvidence) missing.push('缺少证据/数据');
+      if (!p.hasStandard) missing.push('未写可验收标准');
+      missing.forEach(function(m){ html += '<span class="tag tag-red">' + m + '</span>'; });
+      html += '</div></div></div>';
+    });
+  }
+  html += '</div>';
+
+  // === 可立刻沉淀资产 ===
+  html += '<div class="section"><h2>可立刻沉淀资产</h2>';
+  if (assets.length === 0) {
+    html += '<p style="color:var(--text-dim)">暂无达到可沉淀标准的回答</p>';
+  } else {
+    // Group by role
+    var grouped = {};
+    assets.forEach(function(a) {
+      if (!grouped[a.role]) grouped[a.role] = [];
+      grouped[a.role].push(a);
+    });
+    Object.keys(grouped).forEach(function(role) {
+      html += '<h3 style="margin-top:16px;">' + ROLE_LABELS[role] + '</h3>';
+      grouped[role].forEach(function(a) {
+        html += '<div class="asset-card">';
+        html += '<div class="asset-type">' + a.type + '<span class="asset-from">来自 ' + escHtml(a.name) + '</span></div>';
+        html += '<div class="asset-content">' + escHtml(a.content) + '</div>';
+        html += '</div>';
+      });
+    });
+  }
+  html += '</div>';
+
+  // === 7 天小闭环 ===
+  html += '<div class="section"><h2>7 天内建议验证的小闭环</h2>';
+  html += '<div class="action-item"><span class="idx">1</span>把「高判断力回答」中的原文摘要发给对应负责人确认，看是否抓住了关键判断。</div>';
+  html += '<div class="action-item"><span class="idx">2</span>对「需追问」人员做 15 分钟一对一追问，获取具体案例和数据。</div>';
+  html += '<div class="action-item"><span class="idx">3</span>把「可沉淀资产」按类型整理成第一版 SOP/检查清单/话术库，发给对应岗位验证。</div>';
+  html += '<div class="action-item"><span class="idx">4</span>选 1 个「AI 可解决」的检查项（如拍摄前检查），让 AI 试跑 3 条内容看效果。</div>';
+  html += '</div>';
+
+  // === 暂时不建议 ===
+  html += '<div class="section"><h2>暂时不建议做的工具</h2>';
+  html += '<div class="action-item"><span style="color:var(--text-dim)">•</span> 在全量数据不足 10 份时，不建议做自动化评分/排名系统——先收集判断标准本身。</div>';
+  html += '<div class="action-item"><span style="color:var(--text-dim)">•</span> 如果某个岗位的「判断标准」类回答空泛比例 > 60%，说明 SOP/检查清单还没有共识，不建议直接做 AI 工具，先对齐标准。</div>';
+  html += '<div class="action-item"><span style="color:var(--text-dim)">•</span> 「签约分成话术」如果缺乏足够原话样本，不建议做自动生成，先收集原话。</div>';
+  html += '</div>';
+
+  document.getElementById('content').innerHTML = html;
+}
+
+// === 判断力分析引擎 ===
+function analyzePerson(role, fields) {
+  var name = fields['姓名'] || '匿名';
+  var signals = [];
+  var totalScore = 0;
+  var hasCase = false, hasTradeoff = false, hasEvidence = false, hasStandard = false;
+  var bestText = '', bestLen = 0;
+  var allText = '';
+
+  // Collect all text content for analysis
+  Object.keys(fields).forEach(function(key) {
+    var val = fields[key];
+    if (Array.isArray(val)) val = val.join(', ');
+    if (typeof val === 'string') allText += val + '\n';
+  });
+
+  // 1. 是否有真实案例
+  var casePatterns = ['案例', '最近', '当时', '比如', '例如', '有一次', '上个', '之前', '那天', '这个月'];
+  var caseHits = 0;
+  casePatterns.forEach(function(p) { if (allText.indexOf(p) >= 0) caseHits++; });
+  if (caseHits >= 2) { hasCase = true; totalScore += 4; signals.push({label:'真实案例',score:4}); }
+  else if (caseHits >= 1) { totalScore += 2; signals.push({label:'有案例痕迹',score:2}); }
+
+  // 2. 是否有数据/证据（数字、百分比、具体指标）
+  var dataPatterns = /\d+[%％万wWkK元块个条次轮天周月年]|\d+[.-]\d+/g;
+  var dataMatches = allText.match(dataPatterns) || [];
+  if (dataMatches.length >= 3) { hasEvidence = true; totalScore += 3; signals.push({label:'数据支撑',score:3}); }
+  else if (dataMatches.length >= 1) { totalScore += 1; signals.push({label:'少量数据',score:1}); }
+
+  // 3. 是否能讲清楚取舍
+  var tradeoffPatterns = ['因为', '所以', '为什么', '而不是', '如果', '放弃', '优先级', '先选', '不重要'];
+  var tradeoffHits = 0;
+  tradeoffPatterns.forEach(function(p) { if (allText.indexOf(p) >= 0) tradeoffHits++; });
+  if (tradeoffHits >= 3) { hasTradeoff = true; totalScore += 3; signals.push({label:'清楚取舍',score:3}); }
+  else if (tradeoffHits >= 1) { totalScore += 1; }
+
+  // 4. 是否能写出可验收标准
+  var standardPatterns = ['标准', '条件', '判断', '能', '不能', '准确率', '指标', '通过', '达标', '合格'];
+  var standardHits = 0;
+  standardPatterns.forEach(function(p) { if (allText.indexOf(p) >= 0) standardHits++; });
+  if (standardHits >= 3) { hasStandard = true; totalScore += 3; signals.push({label:'可验收标准',score:3}); }
+
+  // 5. 文本长度/详细程度加分
+  var textLen = allText.length;
+  if (textLen > 500) { totalScore += 3; signals.push({label:'详细回答',score:3}); }
+  else if (textLen > 200) { totalScore += 1; signals.push({label:'中等长度',score:1}); }
+
+  // Find best text answer
+  Object.keys(fields).forEach(function(key) {
+    var val = fields[key];
+    if (typeof val === 'string' && val.length > bestLen) {
+      bestLen = val.length;
+      bestText = val;
+    }
+  });
+  if (bestText.length > 200) bestText = bestText.substring(0, 200) + '…';
+
+  return {
+    role: role,
+    name: name,
+    totalScore: totalScore,
+    signals: signals,
+    hasCase: hasCase,
+    hasTradeoff: hasTradeoff,
+    hasEvidence: hasEvidence,
+    hasStandard: hasStandard,
+    bestAnswer: bestText,
+    allText: allText,
+    fields: fields
+  };
+}
+
+// === 资产收集 ===
+function collectAssets(people) {
+  var assets = [];
+  var collected = {}; // dedup
+
+  people.forEach(function(p) {
+    if (p.totalScore < 8) return; // skip vague answers
+
+    var fields = p.fields;
+    Object.keys(fields).forEach(function(key) {
+      var val = fields[key];
+      if (typeof val !== 'string' || val.length < 20) return;
+      if (collected[p.role + '|' + key]) return;
+
+      // 原话
+      if (key.indexOf('原话') >= 0 && val.length > 20) {
+        assets.push({role:p.role, type:'原话', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+      // 失败案例
+      if ((key.indexOf('案例') >= 0 || key.indexOf('返工') >= 0 || key.indexOf('没签下') >= 0) && val.length > 30) {
+        assets.push({role:p.role, type:'失败案例', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+      // 成功案例
+      if ((key.indexOf('帮到') >= 0 || key.indexOf('沟通顺') >= 0 || key.indexOf('成交') >= 0 || key.indexOf('成功') >= 0) && val.length > 30) {
+        assets.push({role:p.role, type:'成功案例', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+      // 判断标准
+      if ((key.indexOf('标准') >= 0 || key.indexOf('判断') >= 0 || key.indexOf('信号') >= 0) && val.length > 30) {
+        assets.push({role:p.role, type:'判断标准', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+      // 检查清单（拍摄前检查等）
+      if ((key.indexOf('检查') >= 0 && key.indexOf('检查原因') < 0) && val.length > 20) {
+        assets.push({role:p.role, type:'检查清单', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+      // 话术库
+      if (key.indexOf('话术') >= 0 && val.length > 20) {
+        assets.push({role:p.role, type:'话术库', name:p.name, content:val.substring(0,200)});
+        collected[p.role + '|' + key] = true;
+      }
+    });
+  });
+
+  return assets;
+}
+
+function escHtml(s) { if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>

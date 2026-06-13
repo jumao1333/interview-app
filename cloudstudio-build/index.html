@@ -908,13 +908,10 @@ var questions = [];
 var currentStep = -1;
 var answers = {};
 var API_ENDPOINTS = [
-  // 保留 Vercel/Render 作为海外备用，国内一般不可达
   'https://interview-app-phi-ten.vercel.app',
   'https://interview-app-94i4.onrender.com'
 ];
 var API_BASE = API_ENDPOINTS[0];
-// 国内默认走飞书直连，避免等待被墙端点超时
-var PREFER_DIRECT_FEISHU = true;
 
 /* ============================================================
    Screen Navigation
@@ -1272,34 +1269,20 @@ async function doSubmit() {
   var payload = { role: currentRole, name: name, position: '', answers: answers };
   var submitted = false;
 
-  // 国内优先直连飞书（open.feishu.cn 国内可达，无需梯子）
-  if (PREFER_DIRECT_FEISHU) {
+  // 多端点降级提交：依次尝试每个 API 端点
+  for (var ei = 0; ei < API_ENDPOINTS.length; ei++) {
+    var endpoint = API_ENDPOINTS[ei];
     try {
-      var directResult = await submitToFeishuDirect(payload);
-      if (directResult.success) {
-        submitted = true;
-        console.log('[Direct Feishu] 提交成功');
-      }
-    } catch(directErr) {
-      console.log('[Direct Feishu] 失败，尝试API端点:', directErr.message);
-    }
-  }
-
-  // 飞书直连失败 或 海外环境，走 API 端点
-  if (!submitted) {
-    for (var ei = 0; ei < API_ENDPOINTS.length; ei++) {
-      var endpoint = API_ENDPOINTS[ei];
-      try {
-        var controller = new AbortController();
-        var timer = setTimeout(function() { controller.abort(); }, 10000);
-        var resp = await fetch(endpoint + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
-        clearTimeout(timer);
-        var result = await resp.json();
-        if (result.success) { submitted = true; break; }
-        if (resp.status === 400 || resp.status === 500) { console.log('API error from ' + endpoint + ':', result.error); break; }
-      } catch(e) {
-        console.log('Submit error from ' + endpoint + ':', e.message || e);
-      }
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, 15000);
+      var resp = await fetch(endpoint + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
+      clearTimeout(timer);
+      var result = await resp.json();
+      if (result.success) { submitted = true; break; }
+      // 如果返回了业务错误（如字段不匹配），不再尝试下一个端点
+      if (resp.status === 400 || resp.status === 500) { console.log('API error from ' + endpoint + ':', result.error); break; }
+    } catch(e) {
+      console.log('Submit error from ' + endpoint + ':', e.message || e);
     }
   }
 
@@ -1315,9 +1298,23 @@ async function doSubmit() {
     document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
     showScreen('complete');
   } else {
-    // 飞书直连 + API 端点全部失败 → 弹复制弹窗
-    showCopyModal(payload);
-  }
+    // 所有 API 端点不可达（可能是国内网络无法访问 Vercel/Render）
+    // 尝试前端直连飞书 API 作为最终兜底
+    try {
+      var directResult = await submitToFeishuDirect(payload);
+      if (directResult.success) {
+        clearDraft();
+        try { var q2 = JSON.parse(localStorage.getItem('interview_queue') || '[]'); localStorage.setItem('interview_queue', JSON.stringify(q2.filter(function(x){ return x._savedAt !== payload._savedAt; }))); } catch(e){}
+        document.getElementById('complete-icon').textContent = '🎉';
+        document.getElementById('complete-title').textContent = '提交成功';
+        document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
+        showScreen('complete');
+        return;
+      }
+    } catch(directErr) {
+      console.log('[Fallback] Direct Feishu also failed:', directErr.message);
+    }
+    // 最终兜底：弹复制弹窗
     showCopyModal(payload);
   }
 }

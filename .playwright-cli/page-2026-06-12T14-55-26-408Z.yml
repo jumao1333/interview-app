@@ -1,0 +1,13 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e29]:
+    - button "返回选岗位" [ref=e30] [cursor=pointer]:
+      - img [ref=e31]
+      - text: 返回选岗位
+    - generic [ref=e33]:
+      - heading "经纪 · 岗位提效采访" [level=2] [ref=e34]
+      - paragraph [ref=e35]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e37]:
+      - generic [ref=e38]: 你的名字
+      - textbox "可写简称，方便我知道是谁" [ref=e39]
+    - button "开始答题" [ref=e41] [cursor=pointer]
+  - generic [ref=e28]: 飞书已连接

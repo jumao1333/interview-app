@@ -1,0 +1,38 @@
+- generic [ref=e1]:
+  - generic [ref=e29]:
+    - button "返回选岗位" [ref=e30] [cursor=pointer]:
+      - img [ref=e31]
+      - text: 返回选岗位
+    - generic [ref=e33]:
+      - heading "内容负责人/管理层 · 岗位提效采访" [level=2] [ref=e34]
+      - paragraph [ref=e35]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e43]:
+      - generic "第 1 题" [ref=e76] [cursor=pointer]
+      - generic "第 2 题" [ref=e77] [cursor=pointer]
+      - generic "第 3 题" [ref=e78] [cursor=pointer]
+      - generic "第 4 题" [ref=e79] [cursor=pointer]
+      - generic "第 5 题" [ref=e80] [cursor=pointer]
+      - generic "第 6 题" [ref=e81] [cursor=pointer]
+      - generic "第 7 题" [ref=e82] [cursor=pointer]
+      - generic "第 8 题" [ref=e83] [cursor=pointer]
+      - generic "第 9 题" [ref=e84] [cursor=pointer]
+      - generic "第 10 题" [ref=e85] [cursor=pointer]
+      - generic "第 11 题" [ref=e86] [cursor=pointer]
+      - generic "第 12 题" [ref=e87] [cursor=pointer]
+      - generic "第 13 题" [ref=e88] [cursor=pointer]
+      - generic "第 14 题" [ref=e89] [cursor=pointer]
+    - generic [ref=e90]:
+      - generic [ref=e91]:
+        - text: 第 14 题 / 共 14 题
+        - generic [ref=e92]: 必答
+      - generic [ref=e93]: 你上周花在「重复沟通/反复确认」上的时间，大概占工作时长的百分之多少？
+      - generic [ref=e94]: 不用精确，估算即可。例：20%、30%。目的是建立时间基线。
+      - textbox "不用精确，估算即可。例：20%、30%。目的是建立时间基线。" [ref=e95]
+    - generic [ref=e41]:
+      - button "上一题" [ref=e96] [cursor=pointer]
+      - button "提交" [active] [ref=e97] [cursor=pointer]
+    - generic [ref=e99]:
+      - text: 第13题、第14题 为必答题，请填写后再提交。
+      - generic [ref=e100]: 你团队上月的核心数字——编导人均产出几条、其中返工超过 1 ……
+      - button "去填写" [ref=e101] [cursor=pointer]
+  - generic [ref=e28]: 飞书已连接

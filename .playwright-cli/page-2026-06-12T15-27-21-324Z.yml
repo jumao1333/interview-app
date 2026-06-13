@@ -1,0 +1,11 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "经纪负责人/管理层 · 岗位提效采访" [level=2] [ref=e5]
+      - paragraph [ref=e6]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e7]: 共 14 题，约 11 分钟 —— 前 10 题 聊工作，最后 4 题 填几个数字
+    - generic [ref=e9]:
+      - generic [ref=e10]: 你的名字
+      - textbox "可写简称，方便我知道是谁" [ref=e11]
+    - button "开始答题" [ref=e13] [cursor=pointer]
+  - generic [ref=e16]: 检查连接…

@@ -39,7 +39,7 @@ const QDATA = {
     {id:"q3",type:"select",field_select:"Q3-最常返工",field_note:"Q3-补充说明"},
     {id:"q4",type:"text",field_text:"Q4-返工最多案例"},
     {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪",field_note:"Q5-案例说明v4"},
-    {id:"q6",type:"text",field_text:"Q6-AI脚本帮到你的案例"},
+    {id:"q6",type:"text",field_text:"Q8-AI脚本帮到你的案例"},
     {id:"qh1",type:"text",field_text:"QH1-AI脚本手改3处"},
     {id:"qh2",type:"select",field_select:"QH2-AI最易写错内容v3",field_note:"QH2-写错原因v3"},
     {id:"qh3",type:"select",field_select:"QH3-拍摄前检查5项",field_note:"QH3-检查原因"},

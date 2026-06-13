@@ -1,0 +1,41 @@
+- generic [ref=e1]:
+  - generic [ref=e29]:
+    - button "返回选岗位" [ref=e30] [cursor=pointer]:
+      - img [ref=e31]
+      - text: 返回选岗位
+    - generic [ref=e33]:
+      - heading "内容负责人/管理层 · 岗位提效采访" [level=2] [ref=e34]
+      - paragraph [ref=e35]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e43]:
+      - generic "第 1 题" [ref=e44] [cursor=pointer]
+      - generic "第 2 题" [ref=e45] [cursor=pointer]
+      - generic "第 3 题" [ref=e46] [cursor=pointer]
+      - generic "第 4 题" [ref=e47] [cursor=pointer]
+      - generic "第 5 题" [ref=e48] [cursor=pointer]
+      - generic "第 6 题" [ref=e49] [cursor=pointer]
+      - generic "第 7 题" [ref=e50] [cursor=pointer]
+      - generic "第 8 题" [ref=e51] [cursor=pointer]
+      - generic "第 9 题" [ref=e52] [cursor=pointer]
+      - generic "第 10 题" [ref=e53] [cursor=pointer]
+      - generic "第 11 题" [ref=e54] [cursor=pointer]
+      - generic "第 12 题" [ref=e55] [cursor=pointer]
+      - generic "第 13 题" [ref=e56] [cursor=pointer]
+      - generic "第 14 题" [ref=e57] [cursor=pointer]
+    - generic [ref=e59]:
+      - generic [ref=e60]: 第 1 题 / 共 14 题
+      - generic [ref=e61]: 你这条线现在最重要的结果是什么？
+      - generic [ref=e62]:
+        - generic [ref=e63] [cursor=pointer]: 提高爆款率
+        - generic [ref=e64] [cursor=pointer]: 减少返工
+        - generic [ref=e65] [cursor=pointer]: 提升账号增长
+        - generic [ref=e66] [cursor=pointer]: 提升新人培养
+        - generic [ref=e67] [cursor=pointer]: 复盘更准
+        - generic [ref=e68] [cursor=pointer]: 标准更统一
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - text: 补充
+          - generic [ref=e73]: （选完后补充你的想法）
+        - textbox "说说你选这个的原因……" [ref=e74]
+    - button "下一题" [active] [ref=e75] [cursor=pointer]
+  - generic [ref=e28]: 飞书已连接

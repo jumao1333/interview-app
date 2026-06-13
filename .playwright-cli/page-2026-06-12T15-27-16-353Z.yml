@@ -1,0 +1,36 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e29]:
+    - button "返回选岗位" [ref=e30] [cursor=pointer]:
+      - img [ref=e31]
+      - text: 返回选岗位
+    - generic [ref=e33]:
+      - heading "内容负责人/管理层 · 岗位提效采访" [level=2] [ref=e34]
+      - paragraph [ref=e35]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e43]:
+      - generic "第 1 题" [ref=e102] [cursor=pointer]
+      - generic "第 2 题" [ref=e103] [cursor=pointer]
+      - generic "第 3 题" [ref=e104] [cursor=pointer]
+      - generic "第 4 题" [ref=e105] [cursor=pointer]
+      - generic "第 5 题" [ref=e106] [cursor=pointer]
+      - generic "第 6 题" [ref=e107] [cursor=pointer]
+      - generic "第 7 题" [ref=e108] [cursor=pointer]
+      - generic "第 8 题" [ref=e109] [cursor=pointer]
+      - generic "第 9 题" [ref=e110] [cursor=pointer]
+      - generic "第 10 题" [ref=e111] [cursor=pointer]
+      - generic "第 11 题" [ref=e112] [cursor=pointer]
+      - generic "第 12 题" [ref=e113] [cursor=pointer]
+      - generic "第 13 题" [ref=e114] [cursor=pointer]
+      - generic "第 14 题" [ref=e115] [cursor=pointer]
+    - generic [ref=e116]:
+      - generic [ref=e117]: 第 5 题 / 共 14 题
+      - generic [ref=e118]: 你认为当前最大问题是这个，有什么证据能证明？
+      - generic [ref=e119]: 请写真实数据、案例、最近一次会议/复盘/返工情况。不要只写感觉。
+      - textbox "请写真实数据、案例、最近一次会议/复盘/返工情况。不要只写感觉。" [ref=e120]
+    - generic [ref=e41]:
+      - button "上一题" [ref=e96] [cursor=pointer]
+      - button "下一题" [ref=e75] [cursor=pointer]
+    - generic [ref=e99]:
+      - text: 第13题、第14题 为必答题，请填写后再提交。
+      - generic [ref=e100]: 你团队上月的核心数字——编导人均产出几条、其中返工超过 1 ……
+      - button "去填写" [ref=e101] [cursor=pointer]
+  - generic [ref=e28]: 飞书已连接

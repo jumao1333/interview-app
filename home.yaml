@@ -1,0 +1,24 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: MAIYA MCN
+      - heading "岗位提效采访" [level=1] [ref=e6]
+      - paragraph [ref=e7]: 选你的岗位，开始填写。预计 8-12 分钟。
+    - generic [ref=e9]:
+      - generic [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 🎬
+        - generic [ref=e12]: 内容负责人/管理层
+        - generic [ref=e13]: 组长、内容总监等管理岗
+      - generic [ref=e14] [cursor=pointer]:
+        - generic [ref=e15]: ✍️
+        - generic [ref=e16]: 内容编导
+        - generic [ref=e17]: 一线编导、脚本写作、跟拍后期
+      - generic [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: 🤝
+        - generic [ref=e20]: 经纪负责人/管理层
+        - generic [ref=e21]: 经纪团队管理岗
+      - generic [ref=e22] [cursor=pointer]:
+        - generic [ref=e23]: 📋
+        - generic [ref=e24]: 经纪
+        - generic [ref=e25]: 一线经纪，推进达人签约
+  - generic [ref=e28]: 检查连接…

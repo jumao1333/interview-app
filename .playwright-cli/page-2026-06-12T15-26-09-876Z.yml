@@ -1,0 +1,14 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e29]:
+    - button "返回选岗位" [ref=e30] [cursor=pointer]:
+      - img [ref=e31]
+      - text: 返回选岗位
+    - generic [ref=e33]:
+      - heading "内容负责人/管理层 · 岗位提效采访" [level=2] [ref=e34]
+      - paragraph [ref=e35]: 按真实情况写，不用正式，越具体越有用
+    - generic [ref=e36]: 共 14 题，约 11 分钟 —— 前 12 题 聊工作，最后 2 题 填几个数字
+    - generic [ref=e38]:
+      - generic [ref=e39]: 你的名字
+      - textbox "可写简称，方便我知道是谁" [ref=e40]
+    - button "开始答题" [ref=e42] [cursor=pointer]
+  - generic [ref=e28]: 飞书已连接

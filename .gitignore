@@ -6,3 +6,5 @@ deploy/
 server.py
 sync.py
 interview.html
+.vercel
+.env*

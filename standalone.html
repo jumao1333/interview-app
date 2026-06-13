@@ -1298,7 +1298,23 @@ async function doSubmit() {
     document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
     showScreen('complete');
   } else {
-    // 提交失败：弹复制弹窗，让用户把数据发给管理员
+    // 所有 API 端点不可达（可能是国内网络无法访问 Vercel/Render）
+    // 尝试前端直连飞书 API 作为最终兜底
+    try {
+      var directResult = await submitToFeishuDirect(payload);
+      if (directResult.success) {
+        clearDraft();
+        try { var q2 = JSON.parse(localStorage.getItem('interview_queue') || '[]'); localStorage.setItem('interview_queue', JSON.stringify(q2.filter(function(x){ return x._savedAt !== payload._savedAt; }))); } catch(e){}
+        document.getElementById('complete-icon').textContent = '🎉';
+        document.getElementById('complete-title').textContent = '提交成功';
+        document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
+        showScreen('complete');
+        return;
+      }
+    } catch(directErr) {
+      console.log('[Fallback] Direct Feishu also failed:', directErr.message);
+    }
+    // 最终兜底：弹复制弹窗
     showCopyModal(payload);
   }
 }
@@ -1332,6 +1348,139 @@ async function doSubmit() {
     } catch(e) {}
   }, 2000);
 })();
+
+/* ===========================================================
+   Direct Feishu Fallback — 当 Vercel/Render 都不可达时使用
+   open.feishu.cn 在国内完全可访问，不需要梯子
+   ============================================================ */
+var FEISHU_CFG = {
+  APP_ID: 'cli_aaaf92c5f3bb1cbc',
+  APP_SECRET: 'C9p9SbxtK3ALcUCYdbaJIgmioB0QfIMj',
+  BASE_TOKEN: 'SIAAbq5X4acWPys8rRUcj9ZYnjd'
+};
+
+var FEISHU_TABLES = {
+  content_leader: { table_id: 'tbl1v3vEIITS6NxL' },
+  content_editor: { table_id: 'tbl8NNSNiw2ZWXYF' },
+  broker_leader: { table_id: 'tblxmIJ6N44chyYR' },
+  broker: { table_id: 'tblMF5VM45WxKjZq' }
+};
+
+var FEISHU_QDATA = {
+  content_leader: [
+    {id:"q1",type:"select",field_select:"Q1-最重要的结果",field_note:"Q1-补充说明"},
+    {id:"q2",type:"select",field_select:"Q2-脚本外最想让AI解决什么",field_note:"Q2-补充说明"},
+    {id:"q3",type:"select",field_select:"Q3-团队最反复出现的问题",field_note:"Q3-补充说明"},
+    {id:"qh1",type:"select",field_select:"QH1-取舍提效环节",field_note:"QH1-取舍理由"},
+    {id:"qh2",type:"text",field_text:"QH2-反证最大卡点"},
+    {id:"qh3",type:"text",field_text:"QH3-新人独立标准"},
+    {id:"qh4",type:"text",field_text:"QH4-可复制标准"},
+    {id:"qh5",type:"text",field_text:"QH5-沉淀3个判断"},
+    {id:"q6",type:"select",field_select:"Q6-已有提效方法",field_note:"Q6-补充说明"},
+    {id:"q7",type:"select",field_select:"Q7-下周验证的小提效动作",field_note:"Q7-补充说明"},
+    {id:"q8",type:"select",field_select:"Q8-最希望编导补充的信息",field_note:"Q8-补充说明"},
+    {id:"qh6",type:"text",field_text:"QH6-失误反演"},
+    {id:"q9",type:"text",field_text:"Q9-核心数字基线"},
+    {id:"q10",type:"text",field_text:"Q10-上周重复沟通时间占比"}
+  ],
+  content_editor: [
+    {id:"q1",type:"select",field_select:"Q1-每周最花时间",field_note:"Q1-补充说明"},
+    {id:"q2",type:"text",field_text:"Q2-最近耗时内容案例"},
+    {id:"q3",type:"select",field_select:"Q3-最常返工",field_note:"Q3-补充说明"},
+    {id:"q4",type:"text",field_text:"Q4-返工最多案例"},
+    {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪",field_note:"Q5-案例说明v4"},
+    {id:"q6",type:"text",field_text:"Q8-AI脚本帮到你的案例"},
+    {id:"qh1",type:"text",field_text:"QH1-AI脚本手改3处"},
+    {id:"qh2",type:"select",field_select:"QH2-AI最易写错内容v3",field_note:"QH2-写错原因v3"},
+    {id:"qh3",type:"select",field_select:"QH3-拍摄前检查5项",field_note:"QH3-检查原因"},
+    {id:"q7",type:"select",field_select:"Q9-判断脚本能不能拍最看什么",field_note:"Q9-补充说明"},
+    {id:"q8",type:"select",field_select:"Q10-拍摄与后期最易出问题v3",field_note:"Q10-补充说明v3"},
+    {id:"q9",type:"select",field_select:"Q12-AI先帮你省一个动作",field_note:"Q12-补充说明"},
+    {id:"q10",type:"select",field_select:"Q13-最希望负责人支持",field_note:"Q13-补充说明"},
+    {id:"qh4",type:"text",field_text:"QH4-失误反演"},
+    {id:"q11",type:"text",field_text:"Q11-上周工作时长分布"},
+    {id:"q12",type:"text",field_text:"Q12-上月产出及返工"}
+  ],
+  broker_leader: [
+    {id:"qh1",type:"text",field_text:"QH1-签约判断路径"},
+    {id:"qh2",type:"text",field_text:"QH2-不建议签的达人"},
+    {id:"qh3",type:"select",field_select:"QH3-50分成本质拒绝",field_note:"QH3-50分成理由"},
+    {id:"qh4",type:"select",field_select:"QH4-AI初筛8信息v3",field_note:"QH4-初筛关键前三v3"},
+    {id:"qh5",type:"text",field_text:"QH5-成交利益判断"},
+    {id:"q1",type:"select",field_select:"Q1-最重要的结果",field_note:"Q1-补充说明"},
+    {id:"q3",type:"select",field_select:"Q3-签约最卡在哪一步",field_note:"Q3-补充说明"},
+    {id:"q4",type:"select",field_select:"Q4-达人长期值得签的标准",field_note:"Q4-补充说明"},
+    {id:"q8",type:"text",field_text:"Q8-v4-团队判断差距"},
+    {id:"q9",type:"text",field_text:"Q9-v4-50分成让步边界"},
+    {id:"q10",type:"text",field_text:"Q10-v4-核心数字基线"},
+    {id:"q11",type:"text",field_text:"Q11-v4-扩编vs提质量"},
+    {id:"qh6",type:"text",field_text:"QH6-失误反演"},
+    {id:"q12",type:"text",field_text:"Q12-v4-上周推进卡住时间占比"}
+  ],
+  broker: [
+    {id:"q1",type:"select",field_select:"Q1-每周最花时间",field_note:"Q1-补充说明"},
+    {id:"q2",type:"select",field_select:"Q2-签约最卡在哪一步",field_note:"Q2-补充说明"},
+    {id:"qh1",type:"select",field_select:"QH1-值得聊的信号v3",field_note:"QH1-信号案例v3"},
+    {id:"qh2",type:"text",field_text:"QH2-拒绝挽回与放弃"},
+    {id:"qh3",type:"select",field_select:"QH3-最卡话术类型",field_note:"QH3-卡住的原话"},
+    {id:"q3",type:"text",field_text:"Q3-值得签但没签下案例"},
+    {id:"q4",type:"text",field_text:"Q4-拒绝50分成原话"},
+    {id:"q5",type:"text",field_text:"Q5-沟通顺的案例"},
+    {id:"q6",type:"select",field_select:"Q6-AI先帮你省一个动作",field_note:"Q6-补充说明"},
+    {id:"q7",type:"select",field_select:"Q7-判断达人值得聊的标准",field_note:"Q7-补充说明"},
+    {id:"q8",type:"select",field_select:"Q8-最希望负责人支持",field_note:"Q8-补充说明"},
+    {id:"qh4",type:"text",field_text:"QH4-失误反演"},
+    {id:"q9",type:"text",field_text:"Q9-上月接触深聊签约数字"},
+    {id:"q10",type:"text",field_text:"Q10-上周跟进卡住时间占比"}
+  ]
+};
+
+async function submitToFeishuDirect(payload) {
+  // 1. 获取 tenant_access_token
+  var tokenResp = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ app_id: FEISHU_CFG.APP_ID, app_secret: FEISHU_CFG.APP_SECRET })
+  });
+  var tokenData = await tokenResp.json();
+  if (tokenData.code !== 0) throw new Error('Feishu token failed: ' + (tokenData.msg || 'unknown'));
+  var token = tokenData.tenant_access_token;
+
+  // 2. 构建飞书字段
+  var fields = { '姓名': payload.name, '所属岗位': payload.position || '', '填写日期': Date.now() };
+  var qdata = FEISHU_QDATA[payload.role] || [];
+  for (var i = 0; i < qdata.length; i++) {
+    var q = qdata[i];
+    var ans = payload.answers[q.id];
+    if (!ans) continue;
+    if (q.type === 'select') {
+      var selected = ans.selected;
+      if (selected && selected.length > 0) fields[q.field_select] = selected;
+      if (q.field_note && ans.note !== undefined && String(ans.note) !== '') fields[q.field_note] = String(ans.note);
+    } else {
+      var text = typeof ans === 'string' ? ans : (ans.text || '');
+      if (text && q.field_text) fields[q.field_text] = text;
+    }
+  }
+
+  // 3. 写入飞书
+  var tableInfo = FEISHU_TABLES[payload.role];
+  if (!tableInfo) throw new Error('Unknown role: ' + payload.role);
+
+  var writeResp = await fetch(
+    'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FEISHU_CFG.BASE_TOKEN + '/tables/' + tableInfo.table_id + '/records',
+    {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ fields: fields })
+    }
+  );
+  var writeData = await writeResp.json();
+  if (writeData.code !== 0) throw new Error('Feishu write failed: ' + (writeData.msg || 'unknown') + ' code=' + writeData.code);
+
+  console.log('[Direct Feishu] OK record_id=' + writeData.data.record.record_id);
+  return { success: true, record_id: writeData.data.record.record_id };
+}
 
 function showCopyModal(payload) {
   document.getElementById('modal-json').value = JSON.stringify(payload, null, 2);

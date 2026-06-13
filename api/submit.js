@@ -1,4 +1,4 @@
-const { TABLES, writeToFeishu, buildFields } = require('./_lib/feishu');
+const { TABLES, safeWriteToFeishu, buildFields } = require('./_lib/feishu');
 const https = require('https');
 
 // 递归拉取所有记录
@@ -80,7 +80,7 @@ module.exports = async (req, res) => {
     }
 
     let fields = buildFields(role, name, position || '', answers || {});
-    let result = await writeToFeishu(role, fields);
+    let result = await safeWriteToFeishu(role, fields);
 
     // 容错：字段名不存在时自动去掉错误字段重试（最多3次）
     let retryCount = 0;
@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
       if (badField) {
         console.warn(`[RETRY ${retryCount+1}] Removing bad field: ${badField}`);
         delete fields[badField];
-        result = await writeToFeishu(role, fields);
+        result = await safeWriteToFeishu(role, fields);
         retryCount++;
       } else {
         break; // 无法识别哪个字段有问题
@@ -107,7 +107,7 @@ module.exports = async (req, res) => {
           fields[k] = [v];
         }
       }
-      result = await writeToFeishu(role, fields);
+      result = await safeWriteToFeishu(role, fields);
     }
 
     if (result.code === 0) {

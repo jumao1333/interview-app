@@ -147,6 +147,21 @@ function writeToFeishu(role, fieldsData) {
   return feishuApi('POST', '/bitable/v1/apps/' + FEISHU_BASE_TOKEN + '/tables/' + tableId + '/records', { fields: fieldsData });
 }
 
+// 缓存每个表的字段名（用于写入前校验）
+let fieldsCache = {};
+
+function getTableFields(tableId) {
+  if (fieldsCache[tableId] && Date.now() < fieldsCache[tableId].expiresAt) {
+    return Promise.resolve(fieldsCache[tableId].fields);
+  }
+  return feishuApi('GET', '/bitable/v1/apps/' + FEISHU_BASE_TOKEN + '/tables/' + tableId + '/fields').then(r => {
+    if (r.code !== 0) return null;
+    const names = new Set(r.data.items.map(f => f.field_name));
+    fieldsCache[tableId] = { fields: names, expiresAt: Date.now() + 3600000 }; // 1小时缓存
+    return names;
+  }).catch(() => null);
+}
+
 function buildFields(role, name, position, answers) {
   const fields = {
     '姓名': name,
@@ -176,4 +191,24 @@ function buildFields(role, name, position, answers) {
   return fields;
 }
 
-module.exports = { TABLES, getTenantToken, writeToFeishu, buildFields };
+// 写入前过滤掉不存在的字段名
+async function safeWriteToFeishu(role, fieldsData) {
+  const tableId = TABLES[role].table_id;
+  const existingFields = await getTableFields(tableId);
+  if (existingFields) {
+    // 只保留飞书表中实际存在的字段
+    const filtered = {};
+    for (const [k, v] of Object.entries(fieldsData)) {
+      if (existingFields.has(k)) {
+        filtered[k] = v;
+      } else {
+        console.warn(`[SKIP] Field not found in Feishu: ${k}`);
+      }
+    }
+    return writeToFeishu(role, filtered);
+  }
+  // 如果查不到字段列表，直接写（兜底）
+  return writeToFeishu(role, fieldsData);
+}
+
+module.exports = { TABLES, getTenantToken, writeToFeishu, buildFields, safeWriteToFeishu };

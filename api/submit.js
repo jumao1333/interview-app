@@ -79,14 +79,42 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Name is required' });
     }
 
-    const fields = buildFields(role, name, position || '', answers || {});
-    const result = await writeToFeishu(role, fields);
+    let fields = buildFields(role, name, position || '', answers || {});
+    let result = await writeToFeishu(role, fields);
+
+    // 容错：字段名不存在时自动去掉错误字段重试（最多3次）
+    let retryCount = 0;
+    while (result.code !== 0 && result.code === 1254041 && retryCount < 3) {
+      // 1254041 = FieldNameNotFound，从错误信息中提取不存在的字段名
+      const errMsg = result.msg || '';
+      const badField = Object.keys(fields).find(k => errMsg.includes(k));
+      if (badField) {
+        console.warn(`[RETRY ${retryCount+1}] Removing bad field: ${badField}`);
+        delete fields[badField];
+        result = await writeToFeishu(role, fields);
+        retryCount++;
+      } else {
+        break; // 无法识别哪个字段有问题
+      }
+    }
+
+    // 容错2：多选字段值格式不对时自动转数组重试
+    if (result.code !== 0 && (result.code === 1254063 || (result.msg || '').includes('MultiSelect'))) {
+      for (const [k, v] of Object.entries(fields)) {
+        if (typeof v === 'string' && v.includes(',')) {
+          fields[k] = v.split(',').map(s => s.trim()).filter(Boolean);
+        } else if (typeof v === 'string' && v.length > 0 && !v.includes(',')) {
+          fields[k] = [v];
+        }
+      }
+      result = await writeToFeishu(role, fields);
+    }
 
     if (result.code === 0) {
       return res.status(200).json({ success: true, record_id: result.data?.record?.record_id || 'ok' });
     } else {
       console.error('[FEISHU]', JSON.stringify(result));
-      return res.status(500).json({ error: result.msg || 'Feishu write failed' });
+      return res.status(500).json({ error: result.msg || 'Feishu write failed', code: result.code });
     }
   } catch (e) {
     console.error(e);

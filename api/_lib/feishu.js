@@ -159,7 +159,7 @@ function buildFields(role, name, position, answers) {
     if (!answer) continue;
     if (q.type === 'select') {
       const selected = answer.selected;
-      if (selected) {
+      if (selected && selected.length > 0) {
         fields[q.field_select] = Array.isArray(selected) ? selected : [selected];
       }
       const note = answer.note;

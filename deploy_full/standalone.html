@@ -233,6 +233,21 @@ body::before {
   -webkit-backdrop-filter: blur(20px);
 }
 
+.question-count-card {
+  background: rgba(41,151,255,0.08);
+  border: 1px solid rgba(41,151,255,0.18);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--accent);
+  line-height: 1.8;
+}
+.question-count-card span { color: var(--text); font-weight: 500; }
+.required-badge { display:inline-block; background:rgba(255,69,58,0.2); color:#ff453a; font-size:11px; padding:1px 8px; border-radius:4px; margin-left:6px; vertical-align:middle; font-weight:600; }
+.toast-warn { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(255,69,58,0.9); color:#fff; padding:12px 24px; border-radius:12px; font-size:14px; z-index:100; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+.toast-warn.show { opacity:1; }
+
 .field { margin-bottom: 14px; }
 .field:last-child { margin-bottom: 0; }
 
@@ -685,6 +700,8 @@ body::before {
 
     <div class="intro-box" id="intro-text"></div>
 
+    <div class="question-count-card" id="question-count"></div>
+
     <div id="info-section" class="info-card hidden">
       <div class="field">
         <label>你的名字</label>
@@ -721,6 +738,8 @@ body::before {
   <span class="status-dot" id="status-dot"></span>
   <span id="status-text">检查连接…</span>
 </div>
+
+<div id="toast-warn" class="toast-warn"></div>
 
 <!-- Modal for offline fallback -->
 <div id="modal-copy" class="modal-overlay hidden">
@@ -765,12 +784,18 @@ var ALL_QUESTIONS = {
       // --- 落地 ---
       {id:"q6",title:"你们现在已有哪类提效方法？",type:"select",options:["提示词","表格模板","脚本工具","复盘模板","检查清单","自动整理","还没有固定用法"],note_label:"补充",note_suffix:"",note_placeholder:"具体用的是什么工具/模板？"},
       {id:"q7",title:"如果下周只验证一个小提效动作，你想先验证什么？",type:"select",options:["脚本可拍检查","拍摄前检查","后期返工归因","评论反馈归类","账号阶段判断","新人训练清单","内容复盘模板"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？预期什么效果？"},
-      {id:"q8",title:"你最希望编导补充哪类真实信息？",type:"select",options:["每周最花时间的动作","返工案例","AI脚本不好用原因","拍摄现场问题","后期沟通问题","他们自己的判断标准"],note_label:"补充",note_suffix:"",note_placeholder:"为什么需要这些信息？"}
+      {id:"q8",title:"你最希望编导补充哪类真实信息？",type:"select",options:["每周最花时间的动作","返工案例","AI脚本不好用原因","拍摄现场问题","后期沟通问题","他们自己的判断标准"],note_label:"补充",note_suffix:"",note_placeholder:"为什么需要这些信息？"},
+
+      // ===== 失误反演 =====
+      {id:"qh6",title:"讲一个你判断会爆、但最后没爆（或反过来）的内容——复盘后你修正了哪条判断？",type:"text",note_prompt:"写清楚当初的判断是什么、结果是什么、复盘后哪条判断标准改了。"},
+
+      // ===== 数字锚点 =====
+      {id:"q9",title:"你团队上月的核心数字——编导人均产出几条、其中返工超过 1 次的有几条——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",required:true,note_prompt:"例：编导8人，人均产出4条/月，其中返工>1次的有2条。直接写数字；没有就说'没有'——这本身也是答案。"},
+      {id:"q10",title:"你上周花在「重复沟通/反复确认」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：20%、30%。目的是建立时间基线。"}
     ]
   },
-
   /* ============================================================
-     内容编导 — v3：保持实操，细致追问 + 拍摄前检查
+     内容编导 — v4：一线实操，加具体追问
      ============================================================ */
   content_editor: {
     intro: "这份问卷想知道你每周真实花时间的动作、最容易返工的地方、最希望被工具帮到的事。越具体，后面帮你省时间的工具越准。",
@@ -779,20 +804,28 @@ var ALL_QUESTIONS = {
       {id:"q2",title:"最近一次让你觉得很耗时间的是哪条内容？",type:"text",note_prompt:"写清楚当时卡在哪里、花了多久、最后怎么解决。"},
       {id:"q3",title:"最常返工的是哪一步？",type:"select",options:["脚本重写","开头重改","拍摄补拍","口播状态不对","素材不够","剪辑方向不对","字幕/包装反复改","账号感觉不对"],note_label:"补充",note_suffix:"",note_placeholder:"最近一次返工是什么情况？"},
       {id:"q4",title:"讲一个最近返工最多的案例。",type:"text",note_prompt:"第一次为什么不行？后来改了什么？改了几轮？最后改对了什么？"},
-      {id:"q5",title:"AI 脚本不好用时，通常是哪儿不好？AI 要写准脚本最缺什么输入？",type:"select",options:["选题不准/方向不对","结构不顺/逻辑乱","开头弱/不抓人","人设不贴/像别人","语言不像真人","不可拍/太书面","账号人设信息不够","过往爆款参考不够","目标用户不清晰","真实案例/故事不够"],note_label:"补充具体例子",note_suffix:"",note_placeholder:"举一个最近的具体例子……"},
-      {id:"q6",title:"讲一个最近 AI 脚本不好用的具体案例。",type:"text",note_prompt:"原稿哪里不行？你怎么改？改完为什么更好？"},
-      {id:"q7",title:"也讲一个 AI 脚本帮到你的案例。",type:"text",note_prompt:"它哪里帮到你？你输入了什么？结果为什么可用？"},
+
+      // ===== 合并 q5+q6：AI 脚本不好用（选择题 + 具体案例合并成一题）=====
+      {id:"q5",title:"AI 脚本不好用时，通常是哪儿不好？举一个最近的具体案例。",type:"select",options:["选题不准/方向不对","结构不顺/逻辑乱","开头弱/不抓人","人设不贴/像别人","语言不像真人","不可拍/太书面","账号人设信息不够","过往爆款参考不够","目标用户不清晰","真实案例/故事不够"],note_label:"这个案例里原稿哪不行、你怎么改、改完为什么更好？",note_suffix:"（打字说明）",note_placeholder:"举一个最近的具体例子，写清楚原稿问题 → 你的修改 → 为什么改完更好……"},
+
+      {id:"q6",title:"讲一个 AI 脚本帮到你的案例。",type:"text",note_prompt:"它哪里帮到你？你输入了什么？结果为什么可用？"},
 
       // ===== 具体追问 =====
       {id:"qh1",title:"最近一次 AI 脚本不好用，你最终手改了哪 3 处？",type:"text",note_prompt:"比如开头、结构、语言、人设、画面、拍摄可执行性。不是「不好用」，是具体改了哪 3 处。"},
       {id:"qh2",title:"哪类内容 AI 最容易写错？",type:"select",options:["情绪类","人设类","故事类","干货类","带货类","观点类","口播类","剧情类"],note_label:"为什么这类最容易错？",note_suffix:"（最好举一个例子）",note_placeholder:"为什么这类最容易错？举一个真实例子……"},
       {id:"qh3",title:"如果 AI 在拍摄前帮你检查，你最希望它检查哪 5 项？",type:"select",options:["开头是否抓人","语言是否像本人","是否有具体画面","是否可拍","是否方便后期剪","是否符合账号风格","是否有爆点","是否踩雷","素材是否够","拍摄成本是否过高"],note_label:"为什么这 5 项最重要？",note_suffix:"（打字说明）",note_placeholder:"说说为什么这 5 项最重要……"},
 
-      {id:"q8",title:"你判断一条脚本能不能拍，最看什么？",type:"select",options:["有没有具体画面","口播是否像本人","信息是否够清楚","开头是否能抓人","拍摄成本是否可控","后期能不能接住","账号风格是否贴"],note_label:"补充",note_suffix:"",note_placeholder:"举个例子……"},
-      {id:"q9",title:"拍摄现场最容易出问题的是什么？跟后期最容易说不清的是什么？",type:"select",options:["达人状态不对","表达不像本人","画面不好拍","临场补信息","素材不够","时间不够","脚本太书面","节奏/重点信息说不清","画面选择/字幕包装分歧","账号风格/情绪感觉对不齐"],note_label:"补充例子",note_suffix:"",note_placeholder:"最近一次出问题是什么情况？"},
-      {id:"q10",title:"如果 AI 只能先帮你省一个动作，你选哪个？",type:"select",options:["检查脚本能不能拍","拍摄前准备清单","提醒账号人设/风格","整理给后期的要求","总结返工原因","归类评论/反馈","整理素材清单","记录选题和账号观察"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"},
-      {id:"q11",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["给清楚标准","减少反复确认","提供账号案例","明确不能做什么","提前判断方向","复盘返工原因","给拍摄前检查表","统一后期要求"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"},
-      {id:"q12",title:"有什么你希望负责人知道，但平时不一定会说的？",type:"text",note_prompt:"想说啥说啥，不用正式。"}
+      {id:"q7",title:"你判断一条脚本能不能拍，最看什么？",type:"select",options:["有没有具体画面","口播是否像本人","信息是否够清楚","开头是否能抓人","拍摄成本是否可控","后期能不能接住","账号风格是否贴"],note_label:"补充",note_suffix:"",note_placeholder:"举个例子……"},
+      {id:"q8",title:"拍摄现场最容易出问题的是什么？跟后期最容易说不清的是什么？",type:"select",options:["达人状态不对","表达不像本人","画面不好拍","临场补信息","素材不够","时间不够","脚本太书面","节奏/重点信息说不清","画面选择/字幕包装分歧","账号风格/情绪感觉对不齐"],note_label:"补充例子",note_suffix:"",note_placeholder:"最近一次出问题是什么情况？"},
+      {id:"q9",title:"如果 AI 只能先帮你省一个动作，你选哪个？",type:"select",options:["检查脚本能不能拍","拍摄前准备清单","提醒账号人设/风格","整理给后期的要求","总结返工原因","归类评论/反馈","整理素材清单","记录选题和账号观察"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"},
+      {id:"q10",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["给清楚标准","减少反复确认","提供账号案例","明确不能做什么","提前判断方向","复盘返工原因","给拍摄前检查表","统一后期要求"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"},
+
+      // ===== 失误反演 =====
+      {id:"qh4",title:"讲一个你判断会爆、但最后没爆（或反过来）的内容——复盘后你修正了哪条判断？",type:"text",note_prompt:"写清楚当初的判断是什么、结果是什么、复盘后哪条判断标准改了。失误样本比成功案例更值钱。"},
+
+      // ===== 数字锚点 =====
+      {id:"q11",title:"上周你的工作时长大概怎么分？写前三项各占几小时。",type:"text",required:true,note_prompt:"不用精确，估算即可。例：脚本12h / 拍摄10h / 剪辑沟通6h。目的是建立时间基线。"},
+      {id:"q12",title:"上月你产出几条内容、其中返工超过 1 次的几条？",type:"text",required:true,note_prompt:"写具体数字。例：产出12条，返工>1次的有3条。如果答不出，说明还没建立基线——这正是后面工具该先帮你建立的。"},
     ]
   },
 
@@ -817,8 +850,21 @@ var ALL_QUESTIONS = {
       {id:"q1",title:"你这条线现在最重要的结果是什么？",type:"select",options:["签约数量","签约质量","缩短签约周期","提高转化率","筛掉低价值达人","统一判断标准","降低沟通成本"],note_label:"补充",note_suffix:"",note_placeholder:"说说你选这个的原因……"},
       {id:"q3",title:"签约最难卡在哪一步？",type:"select",options:["找不到高质量达人","判断不准值不值得签","50%分成对方不接受","内部成本重","沟通推进慢","成熟达人难复制","材料准备不专业","后续承接不确定"],note_label:"补充",note_suffix:"",note_placeholder:"最近一次卡住是什么情况？"},
       {id:"q4",title:"你判断一个达人值得长期签，最看哪些标准？",type:"select",options:["当前收入","未来增长空间","内容能力","商业化能力","合作意愿","稳定性","风险点","公司可承接度","50%接受概率","稀缺性"],note_label:"补充",note_suffix:"",note_placeholder:"哪个标准权重最高？为什么？"},
-      {id:"q8",title:"你们现在有没有评分表、话术、资料模板或 AI 用法？",type:"select",options:["达人评分表","沟通话术","分成异议回复","资料模板","跟进表","AI总结","还没有固定用法"],note_label:"补充",note_suffix:"",note_placeholder:"具体是什么模板/工具？"},
-      {id:"q9",title:"如果下周只验证一个签约提效动作，你想先验证什么？",type:"select",options:["候选达人评分卡","50%异议回复","沟通前资料准备","失败案例复盘","下一步跟进提醒","高价值达人筛选标准"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"}
+
+      // ===== 负责人差异化题（替换旧 q8/q9，加新 q11）=====
+      {id:"q8",title:"你团队里判断最准的人和最差的人，签约成功率差多少？差距主要差在哪一步判断？",type:"text",note_prompt:"写具体数字（如果有的话），以及差距最关键的那一步判断是什么。这是 AI 最该补的位置。"},
+
+      {id:"q9",title:"50% 分成这个政策本身，什么情况下你认为该让步？让出的 10% 买的是什么？",type:"text",note_prompt:"不要只写「看情况」。写具体场景——例如对方自带资源、对方是稀缺类型、公司战略需要……让出的 10% 换来了什么。"},
+
+      {id:"q10",title:"你团队上月的核心数字——签约转化率、人均签约数——请直接写出数字；如果没有现成数据，就写'没有'。",type:"text",required:true,note_prompt:"例：转化率15%，人均签约2个/月。直接写数字；没有就说'没有'——这本身也是答案。"},
+
+      {id:"q11",title:"给你 3 个名额扩编 vs 把现有人均签约质量提 20%，你选哪个？为什么？",type:"text",note_prompt:"选完后补充：你选这个背后的判断是什么？资源有限时，你的优先级怎么排？"},
+
+      // ===== 失误反演 =====
+      {id:"qh6",title:"讲一个你 pass 掉、后来在别家起飞的达人——你当时漏看了什么信号？这条现在进你的筛选标准了吗？",type:"text",note_prompt:"写清楚当初的判断、后来看到的结果、哪条信号你当时没看懂。失误样本比成功案例更值钱。"},
+
+      // ===== 数字锚点 =====
+      {id:"q12",title:"上周你花在「反复沟通/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：25%、40%。目的是建立你的时间基线。"}
     ]
   },
 
@@ -841,7 +887,14 @@ var ALL_QUESTIONS = {
       {id:"q5",title:"讲一个沟通比较顺的案例。",type:"text",note_prompt:"写对方为什么愿意继续聊，哪句话或哪个材料有用。"},
       {id:"q6",title:"如果 AI 先帮你省一个动作，你最想省哪个？",type:"select",options:["整理达人资料","判断值不值得聊","沟通前准备","跟进话术","分成异议回复","总结沟通记录","提醒下一步","生成汇报"],note_label:"补充",note_suffix:"",note_placeholder:"为什么选这个？"},
       {id:"q7",title:"你现在怎么判断一个达人值得继续聊？",type:"select",options:["当前收入高","内容能力强","商业化强","人设稀缺","愿意配合","增长空间大","风险低","公司能帮上忙"],note_label:"补充",note_suffix:"",note_placeholder:"你平时最看哪个信号？"},
-      {id:"q8",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["明确筛选标准","给更好话术","帮忙判断高价值达人","给资料模板","复盘失败案例","明确下一步动作","减少重复汇报"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"}
+      {id:"q8",title:"你最希望负责人在哪件事上给你支持？",type:"select",options:["明确筛选标准","给更好话术","帮忙判断高价值达人","给资料模板","复盘失败案例","明确下一步动作","减少重复汇报"],note_label:"补充",note_suffix:"",note_placeholder:"具体说说……"},
+
+      // ===== 失误反演 =====
+      {id:"qh4",title:"讲一个你 pass 掉、后来在别家起飞的达人——你当时漏看了什么信号？这条现在进你的筛选标准了吗？",type:"text",note_prompt:"写清楚当初的判断、后来看到的结果、哪条信号你当时没看懂。失误样本比成功案例更值钱。"},
+
+      // ===== 数字锚点 =====
+      {id:"q9",title:"上月你接触了多少达人 → 深聊几个 → 签约几个？写具体数字。",type:"text",required:true,note_prompt:"不用精确，估算即可。例：接触30 → 深聊8 → 签2。目的是建立你的转化基线。如果答不出，说明还没建立基线。"},
+      {id:"q10",title:"上周你花在「反复跟进/推进卡住」上的时间，大概占工作时长的百分之多少？",type:"text",required:true,note_prompt:"不用精确，估算即可。例：30%、50%。目的是建立时间基线。"}
     ]
   }
 };
@@ -854,7 +907,11 @@ var isDirectLink = false;
 var questions = [];
 var currentStep = -1;
 var answers = {};
-var API_BASE = '';
+var API_ENDPOINTS = [
+  'https://interview-app-phi-ten.vercel.app',
+  'https://interview-app-94i4.onrender.com'
+];
+var API_BASE = API_ENDPOINTS[0];
 
 /* ============================================================
    Screen Navigation
@@ -885,9 +942,16 @@ function buildProgressDots(total, current) {
     var cls = 'progress-dot';
     if (i < current) cls += ' done';
     else if (i === current) cls += ' active';
-    html += '<span class="' + cls + '"></span>';
+    html += '<span class="' + cls + '" onclick="goToQuestion(' + i + ')" style="cursor:pointer" title="第 ' + (i+1) + ' 题"></span>';
   }
   return html;
+}
+
+function goToQuestion(idx) {
+  saveCurrentAnswer();
+  saveDraft();
+  currentStep = idx;
+  renderQuestion(currentStep);
 }
 
 /* ============================================================
@@ -918,6 +982,20 @@ function loadQuestions(role) {
   document.getElementById('interview-subtitle').textContent = '按真实情况写，不用正式，越具体越有用';
   questions = data.questions;
   document.getElementById('intro-text').textContent = data.intro || '';
+  // 题数预告
+  var total = data.questions.length;
+  var timeMin = Math.max(5, Math.round(total * 0.8));
+  var anchorIds = [];
+  data.questions.forEach(function(q){
+    if (q.id && (q.id.indexOf('q9') >= 0 || q.id.indexOf('q10') >= 0 || q.id.indexOf('q11') >= 0 || q.id.indexOf('q12') >= 0)) {
+      if (anchorIds.indexOf(q.id) < 0) anchorIds.push(q.id);
+    }
+  });
+  var anchorCount = anchorIds.length;
+  var workCount = total - anchorCount;
+  document.getElementById('question-count').innerHTML =
+    '共 <span>' + total + ' 题</span>，约 <span>' + timeMin + ' 分钟</span>' +
+    (anchorCount > 0 ? ' —— 前 <span>' + workCount + ' 题</span> 聊工作，最后 <span>' + anchorCount + ' 题</span> 填几个数字' : '');
   answers = {};
   currentStep = -1;
 
@@ -939,6 +1017,7 @@ function loadQuestions(role) {
 function showInfoScreen() {
   document.getElementById('info-section').classList.remove('hidden');
   document.getElementById('intro-text').classList.add('hidden');
+  document.getElementById('question-count').classList.remove('hidden');
   document.getElementById('progress-section').classList.add('hidden');
   document.getElementById('question-area').innerHTML = '';
   document.getElementById('btn-prev').classList.add('hidden');
@@ -951,6 +1030,7 @@ function showInfoScreen() {
 function renderQuestion(idx) {
   if (idx < 0 || idx >= questions.length) return;
   document.getElementById('info-section').classList.add('hidden');
+  document.getElementById('question-count').classList.add('hidden');
   document.getElementById('progress-section').classList.remove('hidden');
   document.getElementById('progress-section').innerHTML = buildProgressDots(questions.length, idx);
 
@@ -966,7 +1046,7 @@ function renderQuestion(idx) {
   }
 
   var html = '<div class="question-card">';
-  html += '<div class="question-num">第 ' + (idx+1) + ' 题 / 共 ' + questions.length + ' 题</div>';
+  html += '<div class="question-num">第 ' + (idx+1) + ' 题 / 共 ' + questions.length + ' 题' + (q.required ? ' <span class="required-badge">必答</span>' : '') + '</div>';
   html += '<div class="question-title">' + q.title + '</div>';
   if (q.note_prompt) html += '<div class="question-prompt">' + escHtml(q.note_prompt) + '</div>';
 
@@ -1010,10 +1090,24 @@ function renderQuestion(idx) {
 function nextQuestion() {
   saveCurrentAnswer();
   saveDraft();
+  // 必答软提醒：当前题为必答且未回答
+  if (currentStep >= 0 && currentStep < questions.length) {
+    var q = questions[currentStep];
+    if (q.required && !isAnswered(q.id)) {
+      showToast('此题为必答题，建议填写完毕再继续');
+    }
+  }
   if (currentStep === -1) { currentStep = 0; renderQuestion(0); return; }
   currentStep++;
   if (currentStep >= questions.length) currentStep = questions.length - 1;
   renderQuestion(currentStep);
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast-warn');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
 
 function prevQuestion() {
@@ -1095,6 +1189,14 @@ function clearDraft() {
   try { localStorage.removeItem(getDraftKey()); } catch(e) {}
 }
 
+function isAnswered(qid) {
+  var val = answers[qid];
+  if (!val) return false;
+  if (typeof val === 'string') return val.trim().length > 0;
+  if (typeof val === 'object' && val.selected && val.selected.length > 0) return true;
+  return false;
+}
+
 /* ============================================================
    Submit
    ============================================================ */
@@ -1105,6 +1207,20 @@ async function submitForm() {
 
   if (!name) {
     document.getElementById('submit-msg').innerHTML = '<div class="msg-error">请先填写你的名字</div>';
+    return;
+  }
+
+  // 必答题检查
+  var missingRequired = [];
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    if (q.required && !isAnswered(q.id)) {
+      missingRequired.push({idx: i, title: q.title});
+    }
+  }
+  if (missingRequired.length > 0) {
+    var labels = missingRequired.map(function(m){ return '第' + (m.idx+1) + '题'; }).join('、');
+    document.getElementById('submit-msg').innerHTML = '<div class="msg-error"><b>' + labels + ' 为必答题，请填写后再提交。</b><br><small>' + escHtml(missingRequired[0].title.replace(/！/g,'').replace(/？/g,'').substring(0,30) + '……') + '</small><br><button class="btn btn-prev" style="margin-top:8px;padding:8px 24px;font-size:13px;" onclick="document.getElementById(\'submit-msg\').innerHTML=\'\';goToQuestion(' + missingRequired[0].idx + ')">去填写</button></div>';
     return;
   }
 
@@ -1153,26 +1269,69 @@ async function doSubmit() {
   var payload = { role: currentRole, name: name, position: '', answers: answers };
   var submitted = false;
 
-  try {
-    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-    var result = await resp.json();
-    if (result.success) submitted = true;
-  } catch(e) {}
+  // 多端点降级提交：依次尝试每个 API 端点
+  for (var ei = 0; ei < API_ENDPOINTS.length; ei++) {
+    var endpoint = API_ENDPOINTS[ei];
+    try {
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, 15000);
+      var resp = await fetch(endpoint + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
+      clearTimeout(timer);
+      var result = await resp.json();
+      if (result.success) { submitted = true; break; }
+      // 如果返回了业务错误（如字段不匹配），不再尝试下一个端点
+      if (resp.status === 400 || resp.status === 500) { console.log('API error from ' + endpoint + ':', result.error); break; }
+    } catch(e) {
+      console.log('Submit error from ' + endpoint + ':', e.message || e);
+    }
+  }
 
   if (submitted) {
     clearDraft();
+    // 提交成功：清掉本地队列里同一条（如果有的话）
+    try {
+      var q = JSON.parse(localStorage.getItem('interview_queue') || '[]');
+      localStorage.setItem('interview_queue', JSON.stringify(q.filter(function(x){ return x._savedAt !== payload._savedAt; })));
+    } catch(e) {}
     document.getElementById('complete-icon').textContent = '🎉';
     document.getElementById('complete-title').textContent = '提交成功';
     document.getElementById('complete-desc').textContent = '感谢你的时间。整理完后团队会和你同步关键发现。';
     showScreen('complete');
   } else {
-    fallbackSave(payload);
-    document.getElementById('complete-icon').textContent = '✅';
-    document.getElementById('complete-title').textContent = '已保存';
-    document.getElementById('complete-desc').textContent = '数据已记录，管理员稍后会处理。感谢你的时间。';
-    showScreen('complete');
+    // 提交失败：弹复制弹窗，让用户把数据发给管理员
+    showCopyModal(payload);
   }
 }
+
+// 页面加载时自动重试本地队列里未提交的数据
+(function retryQueue() {
+  setTimeout(function() {
+    try {
+      var q = JSON.parse(localStorage.getItem('interview_queue') || '[]');
+      if (!q.length) return;
+      var remaining = [];
+      var promises = q.map(function(item) {
+        // 尝试所有端点
+        var tryEndpoints = API_ENDPOINTS.reduce(function(chain, endpoint) {
+          return chain.catch(function() {
+            return fetch(endpoint + '/api/submit', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(item)
+            }).then(function(r) { return r.json(); }).then(function(d) {
+              if (!d.success) throw new Error('submit failed');
+              return d;
+            });
+          });
+        }, Promise.reject());
+        return tryEndpoints.then(function() {}, function() { remaining.push(item); });
+      });
+      Promise.all(promises).then(function() {
+        localStorage.setItem('interview_queue', JSON.stringify(remaining));
+      });
+    } catch(e) {}
+  }, 2000);
+})();
 
 function showCopyModal(payload) {
   document.getElementById('modal-json').value = JSON.stringify(payload, null, 2);

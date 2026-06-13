@@ -907,7 +907,11 @@ var isDirectLink = false;
 var questions = [];
 var currentStep = -1;
 var answers = {};
-var API_BASE = 'https://interview-app-phi-ten.vercel.app';
+var API_ENDPOINTS = [
+  'https://interview-app-phi-ten.vercel.app',
+  'https://interview-app-94i4.onrender.com'
+];
+var API_BASE = API_ENDPOINTS[0];
 
 /* ============================================================
    Screen Navigation
@@ -1265,15 +1269,21 @@ async function doSubmit() {
   var payload = { role: currentRole, name: name, position: '', answers: answers };
   var submitted = false;
 
-  try {
-    var controller = new AbortController();
-    var timer = setTimeout(function() { controller.abort(); }, 15000);
-    var resp = await fetch(API_BASE + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
-    clearTimeout(timer);
-    var result = await resp.json();
-    if (result.success) submitted = true;
-  } catch(e) {
-    console.log('Submit error:', e.message || e);
+  // 多端点降级提交：依次尝试每个 API 端点
+  for (var ei = 0; ei < API_ENDPOINTS.length; ei++) {
+    var endpoint = API_ENDPOINTS[ei];
+    try {
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, 15000);
+      var resp = await fetch(endpoint + '/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: controller.signal });
+      clearTimeout(timer);
+      var result = await resp.json();
+      if (result.success) { submitted = true; break; }
+      // 如果返回了业务错误（如字段不匹配），不再尝试下一个端点
+      if (resp.status === 400 || resp.status === 500) { console.log('API error from ' + endpoint + ':', result.error); break; }
+    } catch(e) {
+      console.log('Submit error from ' + endpoint + ':', e.message || e);
+    }
   }
 
   if (submitted) {
@@ -1301,13 +1311,20 @@ async function doSubmit() {
       if (!q.length) return;
       var remaining = [];
       var promises = q.map(function(item) {
-        return fetch(API_BASE + '/api/submit', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(item)
-        }).then(function(r) { return r.json(); }).then(function(d) {
-          if (!d.success) remaining.push(item);
-        }).catch(function() { remaining.push(item); });
+        // 尝试所有端点
+        var tryEndpoints = API_ENDPOINTS.reduce(function(chain, endpoint) {
+          return chain.catch(function() {
+            return fetch(endpoint + '/api/submit', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(item)
+            }).then(function(r) { return r.json(); }).then(function(d) {
+              if (!d.success) throw new Error('submit failed');
+              return d;
+            });
+          });
+        }, Promise.reject());
+        return tryEndpoints.then(function() {}, function() { remaining.push(item); });
       });
       Promise.all(promises).then(function() {
         localStorage.setItem('interview_queue', JSON.stringify(remaining));

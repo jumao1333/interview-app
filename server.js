@@ -31,10 +31,10 @@ const QDATA = {
     {id:"q2",type:"select",field_select:"Q2-脚本外最想让AI解决什么",field_note:"Q2-补充说明"},
     {id:"q3",type:"select",field_select:"Q3-团队最反复出现的问题",field_note:"Q3-补充说明"},
     {id:"qh1",type:"select",field_select:"QH1-取舍提效环节",field_note:"QH1-取舍理由"},
-    {id:"qh2",type:"text",field_text:"QH2-证据判断"},
-    {id:"qh3",type:"text",field_text:"QH3-反证判断"},
+    {id:"qh2",type:"text",field_text:"QH2-反证最大卡点"},
+    {id:"qh3",type:"text",field_text:"QH3-新人独立标准"},
     {id:"qh4",type:"text",field_text:"QH4-可复制标准"},
-    {id:"qh5",type:"text",field_text:"QH5-AI沉淀优先级"},
+    {id:"qh5",type:"text",field_text:"QH5-沉淀3个判断"},
     {id:"q6",type:"select",field_select:"Q6-已有提效方法",field_note:"Q6-补充说明"},
     {id:"q7",type:"select",field_select:"Q7-下周验证的小提效动作",field_note:"Q7-补充说明"},
     {id:"q8",type:"select",field_select:"Q8-最希望编导补充的信息",field_note:"Q8-补充说明"},
@@ -47,8 +47,8 @@ const QDATA = {
     {id:"q2",type:"text",field_text:"Q2-最近耗时内容案例"},
     {id:"q3",type:"select",field_select:"Q3-最常返工",field_note:"Q3-补充说明"},
     {id:"q4",type:"text",field_text:"Q4-返工最多案例"},
-    {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪v4",field_note:"Q5-案例说明v4"},
-    {id:"q6",type:"text",field_text:"Q6-AI脚本帮到你的案例"},
+    {id:"q5",type:"select",field_select:"Q5-AI脚本不好用在哪",field_note:"Q5-案例说明v4"},
+    {id:"q6",type:"text",field_text:"Q8-AI脚本帮到你的案例"},
     {id:"qh1",type:"text",field_text:"QH1-AI脚本手改3处"},
     {id:"qh2",type:"select",field_select:"QH2-AI最易写错内容v3",field_note:"QH2-写错原因v3"},
     {id:"qh3",type:"select",field_select:"QH3-拍摄前检查5项",field_note:"QH3-检查原因"},
@@ -182,7 +182,7 @@ function buildFields(role, name, position, answers) {
 
     if (q.type === 'select') {
       const selected = answer.selected;
-      if (selected) {
+      if (selected && selected.length > 0) {
         fields[q.field_select] = Array.isArray(selected) ? selected : [selected];
       }
       const note = answer.note;
